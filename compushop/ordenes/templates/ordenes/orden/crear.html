@@ -1,0 +1,79 @@
+{% extends "tienda/base.html" %}
+
+{% load form_tags %}
+
+{% block title %}Finalizar Pedido{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    <div class="row">     
+
+      <!-- Formulario de pedido -->
+      <div class="col-md-6">
+        <h2 class="mb-4">Finalizar pedido</h2>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% for field in formulario %}
+            <div class="mb-3">
+              <label class="form-label">{{ field.label }}</label>
+              {{ field|add_class:"form-control" }}
+              {% if field.errors %}
+                <div class="text-danger small mt-1">{{ field.errors }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-success mt-3">Confirmar Pedido</button>
+        </form>
+      </div>
+
+      <!-- Carrito -->
+      <div class="col-md-6">
+        <h3 class="mb-4">Tu carrito:</h3>
+        <table class="table table-bordered align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+              <th>Total</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in carro %}
+            {% with producto=item.producto %}
+            <tr>
+              <td>{{ producto.id }}</td>
+              <td>{{ producto.nombre }}</td>
+              <td>{{ item.precio }} €</td>
+              <td>
+                <form action="{% url 'carro:aniadir_a_carro' producto.id %}" method="post" class="d-flex">
+                  {% csrf_token %}
+                  {{ item.formulario_actualizar_cantidad.cantidad }}
+                  {{ item.formulario_actualizar_cantidad.actualizar }}
+                  <button type="submit" class="btn btn-sm btn-primary ms-2">Actualizar</button>
+                </form>
+              </td>
+              <td><strong>{{ item.precio_total }} €</strong></td>
+              <td>
+                <form action="{% url 'carro:eliminar_carro' producto.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                </form>
+              </td>
+            </tr>
+            {% endwith %}
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr class="table-secondary fw-bold">
+              <td colspan="4" class="text-end">Total:</td>
+              <td colspan="2">{{ carro.precio_total }} €</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

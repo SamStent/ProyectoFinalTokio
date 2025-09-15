@@ -1,0 +1,41 @@
+{% extends "tienda/base.html" %}
+
+{% block title %}Productos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">
+        {% if categoria %}
+            {{ categoria.nombre }}
+        {% else %}
+            Todos los productos
+        {% endif %}
+    </h1>
+
+    <!-- Grid de productos -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for producto in productos %}
+        <div class="col">
+            <div class="card h-100">
+                {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+                {% else %}
+                <img src="https://via.placeholder.com/300x200?text=Sin+imagen" class="card-img-top" alt="Sin imagen">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text">
+                        {{ producto.precio }} €
+                    </p>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ producto.get_absolute_url }}" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No hay productos disponibles en esta categoría.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

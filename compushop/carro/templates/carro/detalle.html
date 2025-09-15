@@ -1,0 +1,82 @@
+{% extends "tienda/base.html" %}
+{% load static %}
+
+{% block title %}
+  Tu carrito
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4">Tu carrito</h2>
+
+  {% if carro %}
+    <table class="table table-hover align-middle text-center">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Producto</th>
+          <th>Imagen</th>
+          <th>Precio unitario</th>
+          <th>Cantidad</th>
+          <th>Total</th>
+          <th>Actualizar</th>
+          <th>Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in carro %}
+        {% with producto=item.producto %}
+        <tr>
+          <td>{{ producto.id }}</td>
+          <td>{{ producto.nombre }}</td>
+          <td>
+            <a href="{{ producto.get_absolute_url }}">
+              <img src="{% if producto.imagen %}{{ producto.imagen.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="{{ producto.nombre }}" width="60" height="60" class="img-thumbnail">
+            </a>
+          </td>
+          <td>{{ item.precio }} €</td>
+          <td>{{ item.cantidad }}</td>
+          <td><strong>{{ item.precio_total }} €</strong></td>
+
+          <!-- Formulario actualizar -->
+          <td>
+            <form action="{% url 'carro:aniadir_a_carro' producto.id %}" method="post" class="d-flex">
+              {% csrf_token %}
+              {{ item.formulario_actualizar_cantidad.cantidad }}
+              <input type="submit" value="Actualizar" class="btn btn-sm btn-outline-primary ms-2">
+            </form>
+          </td>
+
+          <!-- Formulario eliminar -->
+          <td>
+            <form action="{% url 'carro:eliminar_carro' producto.id %}" method="post">
+              {% csrf_token %}
+              <input type="submit" value="Eliminar" class="btn btn-sm btn-outline-danger">
+            </form>
+          </td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+
+        <!-- Total -->
+        <tr class="table-secondary fw-bold">
+          <td colspan="5" class="text-end">Total:</td>
+          <td>{{ carro.precio_total }} €</td>
+          <td colspan="2"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-between">
+      <a href="{% url 'tienda:listado_productos' %}" class="btn btn-outline-secondary">🛍️ Seguir comprando</a>
+      <a href="{% url 'ordenes:crear_orden' %}" class="btn btn-success">✅ Finalizar pedido</a>
+    </div>
+
+  {% else %}
+    <div class="alert alert-info">
+      Tu carrito está vacío. <a href="{% url 'tienda:listado_productos' %}" class="alert-link">Comienza a comprar</a>.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
