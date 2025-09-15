@@ -1,0 +1,69 @@
+# Entorno virtual
+env/
+venv/
+ENV/
+*.env
+.env.*
+
+# Archivos y carpetas de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de base de datos local
+db.sqlite3
+*.sqlite3
+
+# Archivos de log
+*.log
+
+# Archivos de compilación
+*.mo
+*.pot
+
+# Archivos de configuración local
+*.local
+*.bak
+*.tmp
+*.swp
+
+# Archivos de test / cobertura
+.coverage
+htmlcov/
+.tox/
+.nox/
+.cache/
+.pytest_cache/
+
+# Configuración de VSCode / PyCharm / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos generados por Django
+staticfiles/
+media/
+
+# Carpeta con documentación no entregable
+docs/
+
+# Flower (monitor de tareas Celery)
+flower.log
+celerybeat-schedule
+celerybeat.pid
+
+# Docker (si usás volúmenes o compilaciones intermedias locales)
+docker-compose.override.yml
+*.pid
+*.sock
+
+# Archivos comprimidos o backups
+*.zip
+*.tar.gz
+*.rar
+
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
