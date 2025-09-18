@@ -71,6 +71,13 @@ def detalle_orden(obj):
     return mark_safe(f'<a href="{url}">Vista</a>')
 
 
+def pdf_orden(obj):
+    url = reverse('ordenes:orden_admin_pdf', args=[obj.id])
+    return mark_safe(f'<a href="{url}">PDF</a>')
+
+pdf_orden.short_description = 'Invoice'
+
+
 @admin.register(Orden)
 class OrdenAdmin(admin.ModelAdmin):
     list_display = [
@@ -87,6 +94,7 @@ class OrdenAdmin(admin.ModelAdmin):
         'actualizado',
         'creado',
         detalle_orden,
+        pdf_orden,
         ]
     list_filter = ['pagado', 'creado', 'actualizado']
     inlines = [ItemOrdenEnLinea]

@@ -1,0 +1,47 @@
+
+<html>
+<body>
+      <h1>Compushop</h1>
+      <p>
+        Invoice no. {{ orden.id }}<br>
+        <span class="secondary">
+          {{ orden.creado|date"M d, Y" }}
+        </span>
+      </p>
+      <h3>Bill to</h3>
+      <p>
+        {{ orden.nombre }} {{ orden.primer_apellido }} {{ orden.segundo_apellido }}<br>
+        {{ orden.email }}<br>
+        {{ orden.direccion }}<br>
+        {{ orden.codigo_postal }}, {{ orden.poblacion }}
+      </p>
+      <h3>Productos comprados</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Coste</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in orden.items.all %}
+            <tr class="row{% cycle '1' '2' %}">
+              <td>{{ item.producto.name}}</td>
+              <td class="num">€{{ item.precio }}</td>
+              <td class="num">€{{ item.cantidad }}</td>
+              <td class="num">€{{ item.obtener_precio }}</td>
+            </tr>
+          {% endfor %}
+          <tr class="total">
+            <td colspan="3">Total</td>
+            <td class="num">€{{ orden.precio_total }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <span class="{% if orden.pagado %}pagado{% else %}Pendiente{% endif %}">
+        {% if orden.pagado %}Pagado{% else %}Pendiente de pago{% endif %}
+      </span>
+</body>
+</html>

@@ -4,6 +4,10 @@ from carro.carro import Carro
 from .forms import FormularioCrearOrden
 from .models import Orden, ItemOrden
 from .tasks import task_orden_creada
+import weasyprint
+from django.contrib.staticfiles import finders
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 
 # Create your views here.
 
@@ -45,6 +49,19 @@ def detalle_orden_admin(request, id_orden):
     return render(
         request, 'admin/ordenes/orden/detalle.html', {'orden': orden}
     )
+
+
+@staff_member_required
+def orden_admin_pdf(request, id_orden):
+    orden = get_object_or_404(Orden, id=id_orden)
+    html = render_to_string('ordenes/orden/pdf.html', {'orden': orden})
+    respuesta = HttpResponse(content_type='application/pdf')
+    respuesta['Content-Disposition'] = f'filename=orden_{orden.id}.pdf'
+    weasyprint.HTML(string=html).write_pdf(
+        respuesta,
+        stylesheets=[weasyprint.CSS(finders.find('css/pdf.css'))]
+    )
+    return respuesta
 
 
 def orden_creada(request):

@@ -9,5 +9,9 @@ urlpatterns = [
         'admin/orden/<int:id_orden>/',
         views.detalle_orden_admin,
         name='detalle_orden_admin'
-    )
+    ),
+    path('admin/orden/<int:id_orden>/pdf/',
+        views.orden_admin_pdf,
+        name='orden_admin_pdf'
+    ),
 ]
