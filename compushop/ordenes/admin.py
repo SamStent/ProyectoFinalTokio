@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 import csv
 import datetime
 from django.http import HttpResponse
+from django.urls import reverse
 '''
     Se desaconseja usar mark_safe en la entrada del usuario para evitar ataques
     de secuencias de comandos entre sitios (XSS). Estos ataques permiten a los
@@ -21,7 +22,7 @@ class ItemOrdenEnLinea(admin.TabularInline):
 def pago_orden(obj):
     url = obj.obtener_url_stripe()
     if obj.stripe_id:
-        html = f'<a href="url" target="_blank">{obj.stripe_id}</a>'
+        html = f'<a href="{url}" target="_blank">{obj.stripe_id}</a>'
         # django escapa la salida HTML por defecto. Usamos la función
         # mark_safe para evitar el escape automático.
         return mark_safe(html)
@@ -65,6 +66,11 @@ def exportar_a_csv(modeladmin, request, queryset):
 exportar_a_csv.short_description = 'Exportar a CSV'
 
 
+def detalle_orden(obj):
+    url = reverse('ordenes:detalle_orden_admin', args=[obj.id])
+    return mark_safe(f'<a href="{url}">Vista</a>')
+
+
 @admin.register(Orden)
 class OrdenAdmin(admin.ModelAdmin):
     list_display = [
@@ -79,7 +85,8 @@ class OrdenAdmin(admin.ModelAdmin):
         'pagado',
         pago_orden,
         'actualizado',
-        'creado'
+        'creado',
+        detalle_orden,
         ]
     list_filter = ['pagado', 'creado', 'actualizado']
     inlines = [ItemOrdenEnLinea]

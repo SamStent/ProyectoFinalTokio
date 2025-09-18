@@ -1,7 +1,8 @@
-from django.shortcuts import redirect, render
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import get_object_or_404, redirect, render
 from carro.carro import Carro
 from .forms import FormularioCrearOrden
-from .models import ItemOrden
+from .models import Orden, ItemOrden
 from .tasks import task_orden_creada
 
 # Create your views here.
@@ -38,5 +39,14 @@ def crear_orden(request):
     )
 
 
+@staff_member_required
+def detalle_orden_admin(request, id_orden):
+    orden = get_object_or_404(Orden, id=id_orden)
+    return render(
+        request, 'admin/ordenes/orden/detalle.html', {'orden': orden}
+    )
+
+
 def orden_creada(request):
+    # Vista que muestra la confirmación de orden creada
     return render(request, 'ordenes/creado.html')
