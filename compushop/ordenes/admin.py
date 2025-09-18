@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import Orden, ItemOrden
 from django.utils.safestring import mark_safe
+import csv
+import datetime
+from django.http import HttpResponse
 '''
     Se desaconseja usar mark_safe en la entrada del usuario para evitar ataques
     de secuencias de comandos entre sitios (XSS). Estos ataques permiten a los
@@ -23,7 +26,44 @@ def pago_orden(obj):
         # mark_safe para evitar el escape automático.
         return mark_safe(html)
     return ''
+
 pago_orden.short_description = 'Stripe payment'
+
+def exportar_a_csv(modeladmin, request, queryset):
+    opciones = modeladmin.model._meta
+    disposicion_contenido = (
+        f'attachment; filename={opciones.verbose_name}.csv'
+    )
+    # Creamos una instancia de HttpResponse, especificando text/csv en el
+    # content type, para decirle al browser que la respuesta tiene que ser
+    # tratada como un archivo CSV.
+    respuesta = HttpResponse(content_type='text/csv; charset=utf-8')
+    respuesta['Content-Disposition'] = disposicion_contenido
+    # Creamos un objeto writer para escribir al objeto respuesta
+    escritor = csv.writer(respuesta)
+    campos = [
+        campo
+        for campo in opciones.get_fields()
+        if not campo.many_to_many and not campo.one_to_many
+    ]
+    # Escribir el encabezado en la primer línea.
+    escritor.writerow([campo.verbose_name for campo in campos])
+    # Iteramos el queryset recibido
+    for obj in queryset:
+        datos_fila = []
+        for campo in campos:
+            # Obtenemos el valor de cada campo con getattr
+            valor = getattr(obj, campo.name)
+            # Si hay un objeto datetime debemos pasarlo a string para el CSV
+            if isinstance(valor, datetime.datetime):
+                valor = valor.strftime('%d/%m/%Y')
+            datos_fila.append(valor)
+        escritor.writerow(datos_fila)
+    return respuesta
+
+# Customizamos el nombre de la acción en el drop-down del admin
+exportar_a_csv.short_description = 'Exportar a CSV'
+
 
 @admin.register(Orden)
 class OrdenAdmin(admin.ModelAdmin):
@@ -43,3 +83,4 @@ class OrdenAdmin(admin.ModelAdmin):
         ]
     list_filter = ['pagado', 'creado', 'actualizado']
     inlines = [ItemOrdenEnLinea]
+    actions = [exportar_a_csv]
