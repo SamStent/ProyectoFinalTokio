@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from carro.carro import Carro
 from .forms import FormularioCrearOrden
 from .models import ItemOrden
@@ -24,11 +24,11 @@ def crear_orden(request):
             carro.limpiar()
             # Iniciar asynchronous task
             task_orden_creada.delay(orden.id)
-            return render(
-                request,
-                'ordenes/orden/creado.html',
-                {'orden': orden}
-            )
+            # Establece la orden en la sesión
+            request.session['id_orden'] = orden.id
+            # Redirige para pagar
+            return redirect('pagos:proceso')
+
     else:
         formulario = FormularioCrearOrden()
     return render(

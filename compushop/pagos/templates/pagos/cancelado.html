@@ -1,0 +1,11 @@
+{% extends "tienda/base.html" %}
+
+{% block content %}
+
+<div class="container mt-5 text-center">
+  <h2 class="text-success">Pago cancelado</h2>
+  <p>Tu pedido no ha sido procesado. Puedes volver a intentarlo en cualquier momento.</p>
+  <a href="{% url 'tienda:listado_productos' %}" class="btn btn-primary mt-3">Volver a tienda</a>
+</div>
+
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -14,6 +15,7 @@ class Orden(models.Model):
     creado = models.DateTimeField(auto_now_add=True)
     actualizado = models.DateTimeField(auto_now=True)
     pagado = models.BooleanField(default=False)
+    stripe_id = models.CharField(max_length=250,blank=True)
 
     class Meta:
         ordering = ['-creado']
@@ -26,6 +28,20 @@ class Orden(models.Model):
 
     def precio_total(self):
         return sum(item.obtener_precio() for item in self.items.all())
+
+    def obtener_url_stripe(self):
+        if not self.stripe_id:
+            # No se asocia un pago
+            return ''
+        if '_test_' in settings.STRIPE_SECRET_KEY:
+            # Path de Stripe para los test de pagos
+            path = '/test/'
+        else:
+            # Path de Stripe para pagos reales
+            path = '/'
+        return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
+
+
 
 class ItemOrden(models.Model):
     orden = models.ForeignKey(
