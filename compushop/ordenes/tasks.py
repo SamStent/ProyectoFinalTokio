@@ -10,11 +10,11 @@ def task_orden_creada(id_orden):
     es creada con éxito.
     """
     orden = Orden.objects.get(id=id_orden)
-    asunto = f'Orden Nro. {id.orden}'
+    asunto = f'Orden Nro. {id_orden}'
     mensaje = (
         f'Estimado {orden.nombre}, \n\n'
         f'Su orden a sido confirmada con éxito.'
-        f'El identificador de su orden es {id.orden}'
+        f'El identificador de su orden es {id_orden}'
     )
     correo_enviado = send_mail(
         asunto, mensaje, 'admin@compushop.com', [orden.email]

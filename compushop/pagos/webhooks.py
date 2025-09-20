@@ -3,6 +3,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from ordenes.models import Orden
+from .tasks import pago_completado
 
 '''
 Going live:
@@ -14,6 +15,7 @@ Going live:
     of using the Stripe CLI. Chapter 17, Going Live, will teach you how to
     configure project settings for multiple environments.
 '''
+
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -49,6 +51,8 @@ def stripe_webhook(request):
                     # Almacena el ID de pago de Stripe
                     orden.stripe_id = session.payment_intent
                     orden.save()
+                    # Iniciar asynchronous task.
+                    pago_completado.delay(orden.id)
             except Orden.DoesNotExist:
                 return HttpResponse(status=404)
 
