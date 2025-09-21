@@ -58,14 +58,64 @@
         {% endwith %}
         {% endfor %}
 
-        <!-- Total -->
-        <tr class="table-secondary fw-bold">
+        {% if carro.cupon %}
+        <!-- Subtotal sin descuento -->
+        <tr class="table-light">
+          <td colspan="5" class="text-end fw-semibold">Subtotal:</td>
+          <td>{{ carro.precio_total }} €</td>
+          <td colspan="2"></td>
+        </tr>
+
+        <!-- Descuento aplicado -->
+        <tr class="table-warning">
+          <td colspan="5" class="text-end">
+            Cupón "<strong>{{ carro.cupon.codigo }}</strong>" ({{ carro.cupon.descuento }}% de descuento)
+          </td>
+          <td class="text-danger">
+            - {{ carro.obtener_descuento|floatformat:2 }} €
+          </td>
+          <td colspan="2"></td>
+        </tr>
+
+        <!-- Total final con descuento -->
+        <tr class="table-success fw-bold">
+          <td colspan="5" class="text-end">Total:</td>
+          <td>{{ carro.total_con_descuento|floatformat:2 }} €</td>
+          <td colspan="2"></td>
+        </tr>
+      {% else %}
+        <!-- Total sin descuento -->
+        <tr class="table-success fw-bold">
           <td colspan="5" class="text-end">Total:</td>
           <td>{{ carro.precio_total }} €</td>
           <td colspan="2"></td>
         </tr>
+      {% endif %}        
+
       </tbody>
     </table>
+
+    <!-- Formulario para aplicar cupón -->
+    <div class="card my-4">
+      <div class="card-header">
+        ¿Tienes un cupón de descuento?
+      </div>
+      <div class="card-body">
+        <form action="{% url 'cupones:aplicar' %}" method="post" class="row g-2 align-items-center">
+          {% csrf_token %}
+          <div class="col-auto">
+            {{ formulario_aplicar_cupon.codigo.label_tag }}
+          </div>
+          <div class="col">
+            {{ formulario_aplicar_cupon.codigo }}
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-outline-primary">Aplicar cupón</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
 
     <!-- Botones -->
     <div class="d-flex justify-content-between">

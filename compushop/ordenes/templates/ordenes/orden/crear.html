@@ -6,7 +6,7 @@
 
 {% block content %}
   <div class="container py-5">
-    <div class="row">     
+    <div class="row">
 
       <!-- Formulario de pedido -->
       <div class="col-md-6">
@@ -67,11 +67,32 @@
             {% endfor %}
           </tbody>
           <tfoot>
-            <tr class="table-secondary fw-bold">
-              <td colspan="4" class="text-end">Total:</td>
+            <!-- Subtotal -->
+            <tr class="table-light">
+              <td colspan="4" class="text-end">Subtotal:</td>
               <td colspan="2">{{ carro.precio_total }} €</td>
             </tr>
+
+            <!-- Descuento por cupón -->
+            {% if carro.cupon %}
+            <tr class="table-warning">
+              <td colspan="4" class="text-end">
+                Cupón "<strong>{{ carro.cupon.codigo }}</strong>" ({{ carro.cupon.descuento }}% de descuento)
+              </td>
+              <td class="text-danger">
+                - {{ carro.obtener_descuento|floatformat:2 }} €
+              </td>
+              <td></td>
+            </tr>
+            {% endif %}
+
+            <!-- Total con descuento -->
+            <tr class="table-success fw-bold">
+              <td colspan="4" class="text-end">Total:</td>
+              <td colspan="2">{{ carro.total_con_descuento|floatformat:2 }} €</td>
+            </tr>
           </tfoot>
+
         </table>
       </div>
     </div>

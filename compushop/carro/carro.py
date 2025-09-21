@@ -1,7 +1,7 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from django.conf import settings
 from tienda.models import Producto
-
+from cupones.models import Cupon
 
 
 class Carro:
@@ -18,6 +18,8 @@ class Carro:
             carro = self.session[settings.ID_SESSION_CARRO] = {}
         # Lo almacenamos en self.carro
         self.carro = carro
+        # Almacena en el objeto Carro el cupon actualmente aplicado.
+        self.id_cupon = self.session.get('id_cupon')
 
     def aniadir(self, producto, cantidad=1, actualizar_cantidad=False):
         '''
@@ -91,3 +93,24 @@ class Carro:
         # Elimina el carro de la sesión
         del self.session[settings.ID_SESSION_CARRO]
         self.guardar()
+
+    @property
+    def cupon(self):
+        if self.id_cupon:
+            try:
+                return Cupon.objects.get(id=self.id_cupon)
+            except Cupon.DoesNotExist:
+                pass
+        return None
+
+    def obtener_descuento(self):
+        if self.cupon:
+            return (
+                self.cupon.descuento / Decimal('100')
+            ) * self.precio_total()
+            return descuento.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        return Decimal('0.00')
+
+    def total_con_descuento(self):
+        total = self.precio_total() - self.obtener_descuento()
+        return total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)

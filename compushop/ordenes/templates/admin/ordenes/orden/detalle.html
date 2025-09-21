@@ -81,11 +81,31 @@
           <td class="num">€{{ item.obtener_precio }}</td>
         </tr>
       {% endfor %}
+
+      {% if orden.cupon %}
+        <tr class="subtotal">
+          <td colspan="3">Subtotal</td>
+          <td class="num">
+            €{{ orden.obtener_total_sin_descuento|floatformat:2 }}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            Cupón "{{ orden.cupon.codigo }}"
+            ({{ orden.descuento }}% de descuento)
+          </td>
+          <td class="num neg">
+            - €{{ orden.obtener_descuento|floatformat:2 }}
+          </td>
+        </tr>
+      {% endif %}
+
       <tr class="total">
         <td colspan="3">Total</td>
         <td class="num">€{{ orden.precio_total }}</td>
       </tr>
     </tbody>
+
   </table>
 </div>
 {% endblock %}

@@ -1,14 +1,46 @@
 {% extends "tienda/base.html" %}
 
-{% block content %}
+{% block title %}Resumen del pedido{% endblock %}
 
-<div class="container mt-5">
+{% block content %}
+<div class="container py-5">
   <h2 class="mb-4">Resumen del pedido</h2>
-  <p>Haz clic en el botón para proceder con el pago</p>
-  <form method="post">
+  <p class="mb-4">Haz clic en el botón para proceder con el pago.</p>
+
+  <table class="table table-bordered text-center align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th colspan="4">Resumen</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if orden.descuento > 0 %}
+      <tr class="table-light">
+        <td class="text-end fw-semibold">Subtotal:</td>
+        <td colspan="3">{{ orden.total_antes_descuento|floatformat:2 }} €</td>
+      </tr>
+      <tr class="table-warning">
+        <td class="text-end">
+          Cupón "<strong>{{ orden.cupon.codigo }}</strong>" ({{ orden.descuento }}% de descuento)
+        </td>
+        <td colspan="3" class="text-danger">
+          - {{ orden.obtener_descuento|floatformat:2 }} €
+        </td>
+      </tr>
+      {% endif %}
+      <tr class="table-success fw-bold">
+        <td class="text-end">Total a pagar:</td>
+        <td colspan="3">{{ orden.precio_total|floatformat:2 }} €</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Botón de pago -->
+  <form method="post" class="text-end mt-4">
     {% csrf_token %}
-    <button type="submit" class="btn btn-success">Pagar ahora con Stripe</button>
+    <button type="submit" class="btn btn-success btn-lg">
+      💳 Pagar ahora con Stripe
+    </button>
   </form>
 </div>
-
 {% endblock %}

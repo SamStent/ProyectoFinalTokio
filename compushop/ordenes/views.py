@@ -17,7 +17,11 @@ def crear_orden(request):
     if request.method == 'POST':
         formulario = FormularioCrearOrden(request.POST)
         if formulario.is_valid():
-            orden = formulario.save()
+            orden = formulario.save(commit=False)
+            if carro.cupon:
+                orden.cupon = carro.cupon
+                orden.descuento = carro.cupon.descuento
+            orden.save()
             for item in carro:
                 ItemOrden.objects.create(
                     orden = orden,

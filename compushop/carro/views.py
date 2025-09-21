@@ -3,6 +3,7 @@ from django.views.decorators.http import require_POST
 from tienda.models import Producto
 from .carro import Carro
 from .forms import FormularioAniadir
+from cupones.forms import FormularioAplicarCupon
 
 # Create your views here.
 
@@ -41,4 +42,12 @@ def detalle_carro(request):
         item['formulario_actualizar_cantidad'] = FormularioAniadir(
             initial={'cantidad': item['cantidad'], 'actualizar_cantidad':True}
         )
-    return render(request, 'carro/detalle.html', {'carro': carro})
+    formulario_aplicar_cupon = FormularioAplicarCupon()
+    return render(
+        request,
+        'carro/detalle.html',
+        {
+            'carro': carro,
+            'formulario_aplicar_cupon': formulario_aplicar_cupon
+        }
+    )

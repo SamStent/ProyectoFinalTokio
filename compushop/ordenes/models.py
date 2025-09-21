@@ -1,3 +1,6 @@
+from decimal import ROUND_HALF_UP, Decimal
+from django.core.validators import MaxValueValidator, MinValueValidator
+from cupones.models import Cupon
 from django.db import models
 from django.conf import settings
 
@@ -16,6 +19,18 @@ class Orden(models.Model):
     actualizado = models.DateTimeField(auto_now=True)
     pagado = models.BooleanField(default=False)
     stripe_id = models.CharField(max_length=250,blank=True)
+    # Campos para los cupones.
+    cupon = models.ForeignKey(
+        Cupon,
+        related_name='ordenes',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    descuento = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(100)]
+    )
 
     class Meta:
         ordering = ['-creado']
@@ -27,7 +42,8 @@ class Orden(models.Model):
         return f'Orden {self.id}'
 
     def precio_total(self):
-        return sum(item.obtener_precio() for item in self.items.all())
+        total = self.total_antes_descuento() - self.obtener_descuento()
+        return total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
     def obtener_url_stripe(self):
         if not self.stripe_id:
@@ -40,6 +56,16 @@ class Orden(models.Model):
             # Path de Stripe para pagos reales
             path = '/'
         return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
+
+    def total_antes_descuento(self):
+        return sum(item.obtener_precio() for item in self.items.all())
+
+    def obtener_descuento(self):
+        total = self.total_antes_descuento()
+        if self.descuento:
+            descuento = total * (self.descuento / Decimal(100))
+            return descuento.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        return Decimal('0.00')
 
 
 
