@@ -1,9 +1,28 @@
 {% extends "cuentas/base_personal.html" %}
-{% block title %}Panel del Personal{% endblock %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Panel Personal" %}{% endblock %}
 
 {% block content %}
-  <div class="dashboard-wrapper">
-    {% block dashboard_content %}
-    {% endblock %}
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h2 class="mb-3 text-primary fw-bold">{% trans "Panel de Control del Personal" %}</h2>
+    <div>
+      <a href="{% url 'cuentas:config_panel' %}" class="btn btn-outline-primary me-2">
+        ⚙️ {% trans "Configurar Panel" %}
+      </a>
+      <button class="btn btn-outline-secondary" onclick="window.location.reload()">
+        🔄 {% trans "Actualizar Métricas" %}
+      </button>
+    </div>
   </div>
+
+  {# Contenido dinámico del dashboard (métricas, tablas, gráficos) #}
+  {% block dashboard_content %}
+  <div class="alert alert-info text-center">
+    {% trans "Selecciona una opción en el menú lateral para comenzar." %}
+  </div>
+  {% endblock %}
+</div>
 {% endblock %}

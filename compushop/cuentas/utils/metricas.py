@@ -1,6 +1,7 @@
 # tienda/utils/metricas.py
 import pandas as pd
 from tienda.models import Producto
+from cuentas.models import ConfiguracionUsuario
 
 
 def obtener_dataframe_productos():
@@ -89,3 +90,73 @@ def calcular_metricas(df):
     )
 
     return metricas
+
+
+def obtener_metricas_activas(usuario):
+    """
+    Retorna un diccionario con las métricas activas para el usuario.
+    En caso de no tener una configuración guardada retorna un diccionario vacío.
+    """
+    try:
+        config = ConfiguracionUsuario.objects.get(usuario=usuario)
+        return config.metricas_activas or {}
+    except ConfiguracionUsuario.DoesNotExist:
+        return {}
+
+
+# ============================================================
+# MÉTRICAS INDIVIDUALES PARA LOS GRÁFICOS DEL DASHBOARD
+# ============================================================
+
+import pandas as pd
+
+
+def metricas_valor_stock(df):
+    """
+    Valor total del stock por proveedor (para gráfico de barras).
+    """
+    if df.empty:
+        return pd.DataFrame(columns=["proveedor", "valor_stock"])
+    return df.groupby("proveedor", as_index=False)["valor_stock"].sum()
+
+
+def metricas_precio_medio(df):
+    """
+    Precio medio por proveedor (para gráfico de líneas).
+    """
+    if df.empty:
+        return pd.DataFrame(columns=["proveedor", "precio_medio"])
+    return df.groupby("proveedor", as_index=False)["precio"].mean().rename(
+        columns={"precio": "precio_medio"}
+    )
+
+
+def metricas_rendimiento_proveedor(df):
+    """
+    Rendimiento: ratio stock/precio medio por proveedor.
+    """
+    if df.empty:
+        return pd.DataFrame(columns=["proveedor", "rendimiento"])
+    df["rendimiento"] = df["stock"] / df["precio"].replace(0, pd.NA)
+    return df.groupby("proveedor", as_index=False)["rendimiento"].mean()
+
+
+def metricas_rotacion_productos(df):
+    """
+    Rotación estimada (inversa del stock).
+    """
+    if df.empty:
+        return pd.DataFrame(columns=["nombre", "rotacion"])
+    df["rotacion"] = 1 / df["stock"].replace(0, pd.NA)
+    return df[["nombre", "rotacion"]].dropna()
+
+
+def metricas_alertas_stock(df, umbral=None):
+    """
+    Devuelve productos con stock por debajo del mínimo o de un umbral.
+    """
+    if df.empty:
+        return pd.DataFrame(columns=["nombre", "stock"])
+    if umbral is not None:
+        return df[df["stock"] < umbral][["nombre", "stock"]]
+    return df[df["stock"] < df["stock_minimo"]][["nombre", "stock"]]
