@@ -1,4 +1,7 @@
 {% extends "tienda/base.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load static %}
 
 {% block title %}{{ producto.nombre }}{% endblock %}
 
@@ -25,45 +28,84 @@
             <table class="table table-striped">
                 <tbody>
                     <tr>
-                        <th scope="row">Categoría</th>
+                        <th scope="row">{% trans "Categoría" %}</th>
                         <td>{{ producto.categoria.nombre }}</td>
                     </tr>
                     <tr>
-                        <th scope="row">Precio</th>
-                        <td>{{ producto.precio }} €</td>
+                        <th scope="row">{% trans "Precio" %}</th>
+                        <td>
+                          {% localize on %}
+                            {{ producto.precio }}
+                          {% endlocalize %} €
+                        </td>
                     </tr>
                     <tr>
-                        <th scope="row">Disponible</th>
+                        <th scope="row">{% trans "Disponible" %}</th>
                         <td>
                             {% if producto.disponible %}
-                                <span class="text-success">Sí</span>
+                                <span class="text-success">{% trans "Sí" %}</span>
                             {% else %}
-                                <span class="text-danger">No</span>
+                                <span class="text-danger">{% trans "No" %}</span>
                             {% endif %}
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row">Creado</th>
+                        <th scope="row">{% trans "Creado" %}</th>
                         <td>{{ producto.creado|date:"d/m/Y H:i" }}</td>
                     </tr>
                     <tr>
-                        <th scope="row">Última actualización</th>
+                        <th scope="row">{% trans "Última actualización" %}</th>
                         <td>{{ producto.actualizado|date:"d/m/Y H:i" }}</td>
                     </tr>
                 </tbody>
             </table>
 
-            <a href="{% url 'tienda:listado_productos' %}" class="btn btn-secondary mt-3">← Volver al listado</a>
+            <a href="{% url 'tienda:listado_productos' %}" class="btn btn-secondary mt-3">← {% trans "Volver al listado" %}</a>
+
             <!-- Formulario para añadir al carrito -->
             <form action="{% url 'carro:aniadir_a_carro' producto.id %}" method="post" class="mt-4">
                 {% csrf_token %}
                 {{ formulario_producto_carro.as_p }}
                 <button type="submit" class="btn btn-success">
-                    <i class="bi bi-cart-plus"></i> Añadir al carrito
+                    <i class="bi bi-cart-plus"></i> {% trans "Añadir al carrito" %}
                 </button>
             </form>
 
         </div>
     </div>
+    {% if productos_recomendados %}
+    <hr class="my-5">
+    <div class="row">
+      <h3 class="mb-4">🔎 {% trans "También podría interesarte" %}</h3>
+      {% for p in productos_recomendados %}
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card h-100 text-center">
+          <a href="{{ p.get_absolute_url }}">
+            {% if p.imagen %}
+            <img src="{{ p.imagen.url }}" class="card-img-top" alt="{{ p.nombre }}">
+            {% else %}
+            <img src="{% static 'img/no_image.png' %}" class="card-img-top" alt="Sin imagen">
+            {% endif %}
+          </a>
+          <div class="card-body">
+            <h6 class="card-title">
+              <a href="{{ p.get_absolute_url }}" class="text-decoration-none">
+                {{ p.nombre }}
+              </a>
+            </h6>
+            <p class="text-muted mb-2">
+              {% localize on %}
+                {{ p.precio }}
+              {% endlocalize %} €
+            </p>
+            <a href="{{ p.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+              {% trans "Ver detalle" %}
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

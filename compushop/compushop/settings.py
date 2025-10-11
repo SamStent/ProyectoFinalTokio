@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+from decouple import config  # No Aparece por defecto.
+import os  # No Aparece por defecto.
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,14 +41,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'carro.apps.CarroConfig',
     'ordenes.apps.OrdenesConfig',
+    'cuentas.apps.CuentasConfig',
     'pagos.apps.PagosConfig',
     'tienda.apps.TiendaConfig',
     'cupones.apps.CuponesConfig',
+    'rosetta',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware', # No Aparece por defecto.
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -65,9 +69,10 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',  # No Aparece por defecto.
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'carro.context_processors.carro',
+                'carro.context_processors.carro',  # No Aparece por defecto.
             ],
         },
     },
@@ -75,7 +80,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'compushop.wsgi.application'
 
-ID_SESSION_CARRO = 'carro'
+ID_SESSION_CARRO = 'carro' # No Aparece por defecto.
 
 
 # Database
@@ -108,14 +113,27 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Ususario personalizado.
+AUTH_USER_MODEL = 'cuentas.Usuario'
+LOGIN_REDIRECT_URL = 'cuentas:panel_personal'
+LOGOUT_REDIRECT_URL = 'cuentas:login'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
+USE_I18N = True
+LANGUAGES = [
+    ('es', 'Español'),
+    ('en', 'Inglés'),
+]
+# LOCALE_PATHS especifica donde django busca archivos para las taducciones.
+LOCALE_PATHS = [       # No Aparece por defecto.
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 TIME_ZONE = 'UTC'
-
-USE_I18N = True
 
 USE_TZ = True
 
@@ -124,24 +142,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
-STATICFILES_DIRS = [ BASE_DIR / "staticfiles" ]
+STATIC_ROOT = BASE_DIR / 'static'  # No Aparece por defecto.
+STATICFILES_DIRS = [ BASE_DIR / "staticfiles" ]  # No Aparece por defecto.
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Europe/Madrid'
+MEDIA_URL = '/media/'   # No Aparece por defecto.
+MEDIA_ROOT = BASE_DIR / 'media'   # No Aparece por defecto.
+TIME_ZONE = 'Europe/Madrid'   # No Aparece por defecto.
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'   # No Aparece por defecto.
 
-CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_URL = 'amqp://localhost'   # No Aparece por defecto.
 
-STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
-STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
-STRIPE_API_VERSION = '2024-04-10'
-STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET')
+# Stripe settings
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')   # No Aparece por defecto.
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')   # No Aparece por defecto.
+STRIPE_API_VERSION = '2024-04-10'   # No Aparece por defecto.
+STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET')   # No Aparece por defecto.
+
+# Redis settings
+REDIS_HOST = 'localhost'   # No Aparece por defecto.
+REDIS_PORT = 6379   # No Aparece por defecto.
+REDIS_DB = 1   # No Aparece por defecto.

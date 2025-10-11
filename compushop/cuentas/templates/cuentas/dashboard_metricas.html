@@ -1,0 +1,45 @@
+{% extends "cuentas/personal_dashboard.html" %}
+{% load static %}
+
+{% block title %}Dashboard de métricas{% endblock %}
+
+{% block dashboard_content %}
+<div class="container my-5">
+  <h2 class="text-center mb-4">📊 Dashboard de Métricas Internas</h2>
+
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          Valor total de stock por proveedor
+        </div>
+        <div class="card-body">
+          {{ grafico_stock_html|safe }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          Precio medio por proveedor
+        </div>
+        <div class="card-body">
+          {{ grafico_precios_html|safe }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+          Distribución porcentual del stock
+        </div>
+        <div class="card-body">
+          {{ grafico_distribucion_html|safe }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

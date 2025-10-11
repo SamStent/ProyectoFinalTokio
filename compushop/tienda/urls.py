@@ -18,7 +18,7 @@ urlpatterns = [
         '<int:id>/<slug:slug>/',
         views.detalle_producto,
         name='detalle_producto'
-    )
+    ),
 ]
 
 if settings.DEBUG:

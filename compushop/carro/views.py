@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from tienda.models import Producto
+from tienda.recomendador import Recomendador
 from .carro import Carro
 from .forms import FormularioAniadir
 from cupones.forms import FormularioAplicarCupon
@@ -43,11 +44,20 @@ def detalle_carro(request):
             initial={'cantidad': item['cantidad'], 'actualizar_cantidad':True}
         )
     formulario_aplicar_cupon = FormularioAplicarCupon()
+    recomendador = Recomendador()
+    productos_carro = [item['producto'] for item in carro]
+    if(productos_carro):
+        productos_recomendados = recomendador.sugerencias_para(
+            productos_carro, max_results=4
+        )
+    else:
+        productos_recomendados = []
     return render(
         request,
         'carro/detalle.html',
         {
             'carro': carro,
-            'formulario_aplicar_cupon': formulario_aplicar_cupon
+            'formulario_aplicar_cupon': formulario_aplicar_cupon,
+            'productos_recomendados': productos_recomendados
         }
     )

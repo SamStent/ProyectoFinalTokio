@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from ordenes.models import Orden
 from .tasks import pago_completado
+from tienda.models import Producto
+from tienda.recomendador import Recomendador
 
 '''
 Going live:
@@ -51,6 +53,11 @@ def stripe_webhook(request):
                     # Almacena el ID de pago de Stripe
                     orden.stripe_id = session.payment_intent
                     orden.save()
+                    # Guardar los productos comprados para las recomendaciones
+                    ids_productos = orden.items.values_list('id_producto')
+                    productos =  Producto.objects.filter(id__in=ids_productos)
+                    r = Recomendador()
+                    r.productos_comprados(productos)
                     # Iniciar asynchronous task.
                     pago_completado.delay(orden.id)
             except Orden.DoesNotExist:

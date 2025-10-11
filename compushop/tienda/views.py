@@ -1,12 +1,15 @@
 from django.shortcuts import get_object_or_404, render
 from .models import Categoria, Producto
 from carro.forms import FormularioAniadir
+from .recomendador import Recomendador
+# from django.utils import translation  ->> Probar las traducciones.
 
 # Create your views here.
 
 
 # Vista para mostrar listado de productos
 def listado_productos(request, slug_categoria=None):
+    # translation.activate('en')  ->> Solo para probar las traducciones.
     categoria = None
     categorias = Categoria.objects.all()
     # Filtra la consulta para que devuelva solo los disponibles
@@ -28,16 +31,19 @@ def listado_productos(request, slug_categoria=None):
 
 # Vista para mostrar un único productos
 
-
 def detalle_producto(request, id, slug):
     producto = get_object_or_404(
         Producto, id=id, slug=slug, disponible=True
     )
     formulario_producto_carro = FormularioAniadir()
+    recomendador = Recomendador()
+    productos_recomendados = recomendador.sugerencias_para([producto], 4)
     return render(
         request,
         'tienda/producto/detalle.html',
         {
         'producto': producto,
-        'formulario_producto_carro': formulario_producto_carro}
+        'formulario_producto_carro': formulario_producto_carro,
+        'productos_recomendados': productos_recomendados
+        }
     )

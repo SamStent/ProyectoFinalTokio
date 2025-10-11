@@ -1,6 +1,7 @@
 {% extends "tienda/base.html" %}
-
-{% block title %}Productos{% endblock %}
+{% load i18n %}
+{% load l10n %}
+{% block title %}{% trans "Productos" %}{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,7 +9,7 @@
         {% if categoria %}
             {{ categoria.nombre }}
         {% else %}
-            Todos los productos
+            {% trans "Todos los productos" %}
         {% endif %}
     </h1>
 
@@ -23,18 +24,20 @@
                 <img src="https://via.placeholder.com/300x200?text=Sin+imagen" class="card-img-top" alt="Sin imagen">
                 {% endif %}
                 <div class="card-body">
-                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <h5 class="card-title">{{ producto }}</h5>
                     <p class="card-text">
-                        {{ producto.precio }} €
+                      {% localize on %}
+                        {{ producto.precio }}
+                      {% endlocalize %} €
                     </p>
                 </div>
                 <div class="card-footer text-center">
-                    <a href="{{ producto.get_absolute_url }}" class="btn btn-primary">Ver detalles</a>
+                    <a href="{{ producto.get_absolute_url }}" class="btn btn-primary">{% trans "Ver detalles" %}</a>
                 </div>
             </div>
         </div>
         {% empty %}
-        <p>No hay productos disponibles en esta categoría.</p>
+        <p>{% trans "No hay productos disponibles en esta categoría." %}</p>
         {% endfor %}
     </div>
 </div>

@@ -1,0 +1,164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-27 13:08+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\cupones\models.py:13
+msgid "Valor en porcentaje (0 a 100)"
+msgstr "Value in percentage (0 to 100)"
+
+#: .\ordenes\models.py:12 .\tienda\models.py:14 .\tienda\models.py:62
+msgid "Nombre"
+msgstr "First name"
+
+#: .\ordenes\models.py:13
+msgid "Primer apellido"
+msgstr "Last Name"
+
+#: .\ordenes\models.py:14
+msgid "Segundo apellido"
+msgstr ""
+
+#: .\ordenes\models.py:15
+msgid "E-mail"
+msgstr "E-mail"
+
+#: .\ordenes\models.py:16
+msgid "Dirección"
+msgstr "Address"
+
+#: .\ordenes\models.py:17
+msgid "Código postal"
+msgstr "Zip code"
+
+#: .\ordenes\models.py:18
+msgid "Población"
+msgstr "City"
+
+#: .\ordenes\models.py:19 .\tienda\models.py:71
+#: .\tienda\templates\tienda\producto\detalle.html:53
+msgid "Creado"
+msgstr "Created at"
+
+#: .\ordenes\models.py:20 .\tienda\models.py:72
+msgid "Actualizado"
+msgstr "Updated"
+
+#: .\ordenes\models.py:21
+msgid "Pagado"
+msgstr "Paid"
+
+#: .\ordenes\models.py:33
+msgid "Descuento (%)"
+msgstr "Discount (%)"
+
+#: .\ordenes\models.py:45
+msgid "Orden"
+msgstr "Order"
+
+#: .\ordenes\models.py:46
+msgid "Órdenes"
+msgstr "Orders"
+
+#: .\ordenes\models.py:91
+msgid "Precio unitario"
+msgstr "Unit price"
+
+#: .\ordenes\models.py:95
+msgid "Cantidad"
+msgstr "Quantity"
+
+#: .\ordenes\models.py:98
+msgid "Item de orden"
+msgstr "Order Item"
+
+#: .\tienda\models.py:15 .\tienda\models.py:63
+msgid "Slug"
+msgstr "Slug"
+
+#: .\tienda\models.py:23 .\tienda\models.py:58
+#: .\tienda\templates\tienda\producto\detalle.html:31
+msgid "Categoría"
+msgstr "Category"
+
+#: .\tienda\models.py:24
+msgid "Categorías"
+msgstr "Categories"
+
+#: .\tienda\models.py:68
+msgid "Descripción"
+msgstr "Description"
+
+#: .\tienda\models.py:69 .\tienda\templates\tienda\producto\detalle.html:35
+msgid "Precio"
+msgstr "Price"
+
+#: .\tienda\models.py:70 .\tienda\templates\tienda\producto\detalle.html:43
+msgid "Disponible"
+msgstr "Available"
+
+#: .\tienda\models.py:81
+msgid "Producto"
+msgstr "Product"
+
+#: .\tienda\models.py:82 .\tienda\templates\tienda\producto\lista.html:3
+msgid "Productos"
+msgstr "Products"
+
+#: .\tienda\templates\tienda\base.html:7
+msgid "Bienvenido a CompuShop"
+msgstr "Welcome to compushop"
+
+#: .\tienda\templates\tienda\producto\detalle.html:46
+msgid "Sí"
+msgstr "Yes"
+
+#: .\tienda\templates\tienda\producto\detalle.html:48
+msgid "No"
+msgstr "No"
+
+#: .\tienda\templates\tienda\producto\detalle.html:57
+msgid "Última actualización"
+msgstr "Last update"
+
+#: .\tienda\templates\tienda\producto\detalle.html:63
+msgid "Volver al listado"
+msgstr "Back to list"
+
+#: .\tienda\templates\tienda\producto\detalle.html:70
+msgid "Añadir al carrito"
+msgstr "Add to cart"
+
+#: .\tienda\templates\tienda\producto\detalle.html:79
+msgid "También podría interesarte"
+msgstr "You might also be interested"
+
+#: .\tienda\templates\tienda\producto\detalle.html:102
+msgid "Ver detalle"
+msgstr "View details"
+
+#: .\tienda\templates\tienda\producto\lista.html:11
+msgid "Todos los productos"
+msgstr "All the products"
+
+#: .\tienda\templates\tienda\producto\lista.html:34
+msgid "Ver detalles"
+msgstr "View details"
+
+#: .\tienda\templates\tienda\producto\lista.html:39
+msgid "No hay productos disponibles en esta categoría."
+msgstr "There are no available products in this category"

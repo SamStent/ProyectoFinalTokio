@@ -1,0 +1,20 @@
+{% extends "cuentas/personal_dashboard.html" %}
+{% block title %}Perfil Gerencia{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <div class="alert alert-info text-center">
+
+    <h3>Bienvenido {{ user.username }}</h3>
+    <h2>Panel del personal - Gerencia</h2>
+    <p>Indicadores clave del negocio (KPI, ingresos, rendimiento).</p>
+
+    <a href="{% url 'cuentas:dashboard_metricas' %}" class="btn btn-gradient mt-3">
+      📊 Ver Dashboard de Métricas
+    </a>
+
+  </div>
+</div>
+
+{% endblock %}

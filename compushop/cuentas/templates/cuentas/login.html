@@ -1,0 +1,26 @@
+{% extends "base_auth.html" %}
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+  <h3 class="text-center mb-4">Bienvenido de nuevo</h3>
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="id_username" class="form-label">Nombre de usuario</label>
+      <input type="text" name="username" id="id-username" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="id_password" class="form-label">Contraseña</label>
+      <input type="password" name="password" id="id_password" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-gradient w-100 mt-2">Entrar</button>
+  </form>
+
+  <p class="text-center mt-3">
+    ¿No tienes cuenta?
+    <a href="{% url 'cuentas:registro' %}">Regístrate aquí</a>
+  </p>
+{% endblock %}
