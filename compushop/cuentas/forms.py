@@ -33,8 +33,37 @@ METRICAS_CHOICES = [
 ]
 
 class ConfiguracionUsuarioForm(forms.ModelForm):
+    """
+    Formulario de configuración del dashboard personal.
+    Muestra las métricas según el rol del usuario (gerencia, ventas o almacén).
+    """
+
+    # Listas de métricas por rol
+    METRICAS_POR_ROL = {
+        "almacen": [
+            ("existencias", _("Existencias por proveedor")),
+            ("rotacion", _("Rotación de productos")),
+            ("distribucion_stock", _("Distribución del stock")),
+            ("alertas_stock", _("Alertas de bajo stock")),
+        ],
+        "ventas": [
+            ("rendimiento", _("Rendimiento por proveedor")),
+            ("precio_medio", _("Precio medio por proveedor")),
+            ("distribucion_stock", _("Distribución del stock")),
+            ("alertas_stock", _("Alertas de bajo stock")),
+        ],
+        "gerencia": [
+            ("valor_stock", _("Valor de stock por proveedor")),
+            ("rendimiento", _("Rendimiento por proveedor")),
+            ("precio_medio", _("Precio medio por proveedor")),
+            ("rotacion", _("Rotación de productos")),
+            ("distribucion_stock", _("Distribución del stock")),
+            ("alertas_stock", _("Alertas de bajo stock")),
+        ],
+    }
+
     metricas_activas = forms.MultipleChoiceField(
-        choices=METRICAS_CHOICES,
+        choices=[],  # se setean dinámicamente en __init__
         widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
         required=False,
         label=_("Métricas activas"),
@@ -56,13 +85,22 @@ class ConfiguracionUsuarioForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        usuario = kwargs.pop("usuario", None)
         super().__init__(*args, **kwargs)
-        # Si hay un JSON ya guardado, marcar los checkboxes correspondientes
-        metricas = self.instance.metricas_activas or {}
-        seleccionadas = [k for k, v in metricas.items() if v]
+
+        # Determinar el rol actual del usuario
+        rol = getattr(usuario, "rol_personal", "personal").lower() if usuario else "personal"
+
+        # Asignar métricas dinámicamente
+        self.fields["metricas_activas"].choices = self.METRICAS_POR_ROL.get(rol, [])
+
+        # Marcar las métricas que ya estaban activas
+        metricas_guardadas = self.instance.metricas_activas or {}
+        seleccionadas = [clave for clave, valor in metricas_guardadas.items() if valor]
         self.initial["metricas_activas"] = seleccionadas
 
     def clean_metricas_activas(self):
         seleccionadas = self.cleaned_data.get("metricas_activas", [])
-        # Convertimos la lista en dict con valores booleanos
-        return {clave: (clave in seleccionadas) for clave, _ in METRICAS_CHOICES}
+        # convertir lista -> dict con booleanos (True/False)
+        todas = dict(self.fields["metricas_activas"].choices)
+        return {clave: (clave in seleccionadas) for clave in todas.keys()}

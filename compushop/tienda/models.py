@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.db.models import Sum, F, FloatField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -99,6 +100,16 @@ class Producto(models.Model):
     def necesita_reposicion(self):
         return self.stock <= self.stock_minimo
 
+    def ajustar_stock(self, delta, tipo='ajuste', usuario=None, motivo='', referencia=''):
+        self.stock = models.F('stock') + delta
+        self.save(update_fields=['stock'])
+        self.refresh_from_db(fields=['stock'])
+        from .models import StockMovimiento
+        StockMovimiento.objects.create(
+            producto=self, tipo=tipo, cantidad=delta, motivo=motivo, usuario=usuario, referencia=referencia
+        )
+        return self.stock
+
     def __str__(self):
         return self.nombre
 
@@ -152,3 +163,21 @@ class Proveedor(models.Model):
 
     def __str__(self):
         return self.nombre_empresa
+
+
+class StockMovimiento(models.Model):
+    TIPO = [
+        ('entrada', 'Entrada'),
+        ('salida', 'Salida'),
+        ('ajuste', 'Ajuste'),
+    ]
+    producto = models.ForeignKey('Producto', on_delete=models.CASCADE, related_name='movimientos')
+    tipo = models.CharField(max_length=10, choices=TIPO)
+    cantidad = models.IntegerField()
+    motivo = models.CharField(max_length=255, blank=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    referencia = models.CharField(max_length=50, blank=True)
+
+    class Meta:
+        ordering = ['-creado_en']

@@ -6,41 +6,31 @@ from cuentas.models import ConfiguracionUsuario
 
 def obtener_dataframe_productos():
     """
-    Extrae los datos de los productos y sus proveedores a un DataFrame de Pandas.
-    Convierte todos los valores numéricos a float explícitamente.
+    Convierte los productos de la base de datos en un DataFrame con columnas limpias.
+    Incluye proveedor y stock, y calcula el valor del stock.
     """
-    productos = Producto.objects.select_related('proveedor').values(
-        'nombre',
-        'precio',
-        'stock',
-        'stock_minimo',
-        'proveedor__nombre_empresa',
-        'proveedor__descuento',
-        'proveedor__iva',
+    productos = Producto.objects.select_related("proveedor").values(
+        "id",
+        "nombre",
+        "proveedor__nombre_empresa",  # campo real del proveedor
+        "precio",
+        "stock",
+        "stock_minimo",
+        "disponible",
     )
 
-    df = pd.DataFrame.from_records(productos)
+    df = pd.DataFrame(list(productos))
 
-    # Renombrar columnas
-    df.rename(columns={
-        'proveedor__nombre_empresa': 'proveedor',
-        'proveedor__descuento': 'descuento',
-        'proveedor__iva': 'iva'
-    }, inplace=True)
+    if df.empty:
+        return df
 
-    # Convertir numéricos a float (de forma robusta)
-    def convertir_a_float(valor):
-        try:
-            return float(valor)
-        except (TypeError, ValueError):
-            return 0.0
+    # Renombrar proveedor
+    df = df.rename(columns={"proveedor__nombre_empresa": "proveedor"})
 
-    for col in ['precio', 'stock', 'stock_minimo', 'descuento', 'iva']:
-        df[col] = df[col].apply(convertir_a_float)
-
-    # Calcular valor del stock y convertir también
-    df['valor_stock'] = df.apply(lambda x: x['precio'] * x['stock'], axis=1)
-    df['valor_stock'] = df['valor_stock'].apply(convertir_a_float)
+    # Calcular valor de stock dinámicamente
+    df["precio"] = pd.to_numeric(df["precio"], errors="coerce").fillna(0)
+    df["stock"] = pd.to_numeric(df["stock"], errors="coerce").fillna(0)
+    df["valor_stock"] = df["precio"] * df["stock"]
 
     return df
 
@@ -50,15 +40,16 @@ def calcular_metricas(df):
     Calcula métricas generales y por proveedor.
     """
     # Asegurar tipos numéricos antes de operar
-    for col in ['precio', 'stock', 'stock_minimo', 'descuento', 'iva', 'valor_stock']:
-        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+    for col in ['precio', 'stock', 'stock_minimo', 'valor_stock']:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
 
     metricas = {}
 
-    # 🔹 1. Valor total de stock global
+    # Valor total del stock global
     metricas['valor_total_stock'] = round(df['valor_stock'].sum(), 2)
 
-    # 🔹 2. Promedio de precio y stock por proveedor
+    # Promedio de precio y stock por proveedor
     metricas['precio_promedio_por_proveedor'] = (
         df.groupby('proveedor', dropna=False)['precio'].mean().round(2).to_dict()
     )
@@ -69,25 +60,17 @@ def calcular_metricas(df):
         df.groupby('proveedor', dropna=False)['valor_stock'].sum().round(2).to_dict()
     )
 
-    # 🔹 3. Número de productos por proveedor
+    # Número de productos por proveedor
     metricas['num_productos_por_proveedor'] = (
         df.groupby('proveedor', dropna=False)['nombre'].count().to_dict()
     )
 
-    # 🔹 4. Productos bajo stock mínimo
+    # Productos bajo stock mínimo
     metricas['productos_bajo_stock_minimo'] = int((df['stock'] <= df['stock_minimo']).sum())
 
-    # 🔹 5. Stock total y precio promedio global
+    # Stock total y precio promedio global
     metricas['stock_total_global'] = int(df['stock'].sum())
     metricas['precio_medio_global'] = round(df['precio'].mean(), 2)
-
-    # 🔹 6. IVA y descuento promedio por proveedor
-    metricas['iva_promedio_por_proveedor'] = (
-        df.groupby('proveedor', dropna=False)['iva'].mean().round(2).to_dict()
-    )
-    metricas['descuento_promedio_por_proveedor'] = (
-        df.groupby('proveedor', dropna=False)['descuento'].mean().round(2).to_dict()
-    )
 
     return metricas
 
@@ -95,13 +78,51 @@ def calcular_metricas(df):
 def obtener_metricas_activas(usuario):
     """
     Retorna un diccionario con las métricas activas para el usuario.
-    En caso de no tener una configuración guardada retorna un diccionario vacío.
+    Si no tiene una configuración guardada, aplica valores por defecto según su rol.
     """
+
+    # Intentamos recuperar la configuración guardada
     try:
         config = ConfiguracionUsuario.objects.get(usuario=usuario)
-        return config.metricas_activas or {}
+        metricas = config.metricas_activas or {}
     except ConfiguracionUsuario.DoesNotExist:
-        return {}
+        metricas = {}
+
+    # === Valores por defecto según el rol ===
+    defaults_por_rol = {
+        "almacen": {
+            "existencias": True,
+            "rotacion": True,
+            "distribucion_stock": True,
+            "alertas_stock": True,
+            "umbral_stock": 5,
+        },
+        "ventas": {
+            "rendimiento": True,
+            "precio_medio": True,
+            "distribucion_stock": True,
+            "alertas_stock": True,
+            "umbral_stock": 5,
+        },
+        "gerencia": {
+            "valor_stock": True,
+            "rendimiento": True,
+            "precio_medio": True,
+            "rotacion": True,
+            "distribucion_stock": True,
+            "alertas_stock": True,
+            "umbral_stock": 5,
+        },
+    }
+
+    # Rol del usuario (usa lower() por seguridad)
+    rol = getattr(usuario, "rol_personal", "").lower()
+
+    # Combinar defaults + configuración guardada
+    defaults = defaults_por_rol.get(rol, {})
+    defaults.update(metricas)
+
+    return defaults
 
 
 # ============================================================

@@ -1,0 +1,25 @@
+{% extends "cuentas/config_panel.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Configuración de Ventas" %}{% endblock %}
+
+{% block opciones_extra %}
+  <hr class="my-4">
+  <h5 class="text-primary mb-3">{% trans "Opciones adicionales de Ventas" %}</h5>
+
+  <div class="row">
+    <div class="col-md-6">
+      <label for="umbral_stock" class="form-label fw-semibold">{% trans "Umbral de stock bajo" %}</label>
+      <input type="number" name="umbral_stock" id="umbral_stock" class="form-control"
+             value="{{ configuracion.metricas_activas.umbral_stock|default:5 }}">
+      <div class="form-text">
+        {% trans "Número mínimo de unidades antes de mostrar alerta de bajo stock en las métricas de ventas." %}
+      </div>
+    </div>
+  </div>
+
+  <small class="text-muted d-block mt-4">
+    {% trans "Las métricas seleccionadas se aplicarán al panel de ventas." %}
+  </small>
+{% endblock %}

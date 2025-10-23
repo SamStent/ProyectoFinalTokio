@@ -1,38 +1,26 @@
 {% extends "cuentas/config_panel.html" %}
 {% load i18n %}
-{% load static %}
 
 {% block title %}{% trans "Configuración de Gerencia" %}{% endblock %}
 
 {% block opciones_extra %}
-<hr class="my-4">
-<h5 class="text-primary mb-3">{% trans "Opciones avanzadas de Gerencia" %}</h5>
+  <hr class="my-4">
+  <h5 class="text-primary mb-3">
+    {% trans "Opciones adicionales de Gerencia" %}
+  </h5>
 
-<div class="form-check mb-3">
-  <input class="form-check-input" type="checkbox" name="metricas_rentabilidad" id="metricas_rentabilidad"
-         {% if configuracion.metricas_activas.rentabilidad %}checked{% endif %}>
-  <label class="form-check-label fw-semibold" for="metricas_rentabilidad">
-    {% trans "Incluir métricas de rentabilidad general" %}
-  </label>
-</div>
+  <div class="row">
+    <div class="col-md-6">
+      <label for="umbral_stock" class="form-label fw-semibold">{% trans "Umbral de stock bajo" %}</label>
+      <input type="number" name="umbral_stock" id="umbral_stock" class="form-control"
+             value="{{ configuracion.metricas_activas.umbral_stock|default:5 }}">
+      <div class="form-text">
+        {% trans "Número mínimo de unidades para generar alertas automáticas de stock." %}
+      </div>
+    </div>
+  </div>
 
-<div class="form-check mb-3">
-  <input class="form-check-input" type="checkbox" name="metricas_costes" id="metricas_costes"
-         {% if configuracion.metricas_activas.costes %}checked{% endif %}>
-  <label class="form-check-label fw-semibold" for="metricas_costes">
-    {% trans "Mostrar métricas de costes por proveedor" %}
-  </label>
-</div>
-
-<div class="form-check mb-3">
-  <input class="form-check-input" type="checkbox" name="metricas_rendimiento" id="metricas_rendimiento"
-         {% if configuracion.metricas_activas.rendimiento %}checked{% endif %}>
-  <label class="form-check-label fw-semibold" for="metricas_rendimiento">
-    {% trans "Activar métricas de rendimiento por departamento" %}
-  </label>
-</div>
-
-<small class="text-muted d-block mt-3">
-  {% trans "Estas métricas adicionales se mostrarán en el panel de Gerencia si están activadas." %}
-</small>
+  <small class="text-muted d-block mt-4">
+    {% trans "Las métricas seleccionadas se mostrarán en el panel de Gerencia." %}
+  </small>
 {% endblock %}

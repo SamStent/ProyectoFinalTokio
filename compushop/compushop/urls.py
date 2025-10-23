@@ -34,6 +34,7 @@ urlpatterns += i18n_patterns(
         path('ordenes/', include('ordenes.urls', namespace='ordenes')),
         path('pagos/', include('pagos.urls', namespace='pagos')),
         path('cupones/', include('cupones.urls', namespace='cupones')),
+        path('almacen/', include('tienda.urls_almacen', namespace='almacen')),
         path('', include('tienda.urls', namespace='tienda')),
 )
 

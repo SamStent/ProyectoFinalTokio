@@ -17,11 +17,26 @@
 
   <div class="row">
 
-    {% if grafico_stock_html %}
+    {# === Valor total de stock (SOLO si hay contenido) === #}
+    {% if grafico_valor_stock_html %}
     <div class="col-lg-6 mb-4">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
           Valor total de stock por proveedor
+        </div>
+        <div class="card-body">
+          {{ grafico_valor_stock_html|safe }}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {# === Existencias por proveedor (ALMACÉN) === #}
+    {% if grafico_stock_html %}
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          Existencias por proveedor
         </div>
         <div class="card-body">
           {{ grafico_stock_html|safe }}
@@ -43,14 +58,15 @@
     </div>
     {% endif %}
 
-    {% if grafico_distribucion_html %}
-    <div class="col-12 mb-4">
+    {# === Distribución del stock === #}
+    {% if grafico_distribucion_stock_html %}
+    <div class="col-lg-6 mb-4">
       <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
-          Distribución porcentual del stock
+        <div class="card-header bg-info text-white">
+          Distribución del stock
         </div>
         <div class="card-body">
-          {{ grafico_distribucion_html|safe }}
+          {{ grafico_distribucion_stock_html|safe }}
         </div>
       </div>
     </div>
@@ -69,6 +85,7 @@
     </div>
     {% endif %}
 
+    {# === Rotación === #}
     {% if grafico_rotacion_html %}
     <div class="col-lg-6 mb-4">
       <div class="card shadow-sm">
@@ -80,8 +97,9 @@
         </div>
       </div>
     </div>
-    {% endif %}
+    {% endif %}    
 
+    {# === Alertas === #}
     {% if alertas_stock_html %}
     <div class="col-12">
       <div class="card shadow-sm border-danger">

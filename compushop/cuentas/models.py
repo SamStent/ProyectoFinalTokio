@@ -27,6 +27,7 @@ class Usuario(AbstractUser):
         null=True,
         help_text="Solo para usuarios del tipo 'personal'."
     )
+    preferencias = models.JSONField(default=dict, blank=True)
 
     def es_cliente(self):
         return self.tipo_cuenta == 'cliente'

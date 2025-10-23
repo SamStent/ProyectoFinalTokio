@@ -2,6 +2,7 @@
 import plotly.express as px
 import plotly.io as pio
 import pandas as pd
+from plotly.offline import plot
 
 
 # ============================================================
@@ -151,3 +152,96 @@ def bloque_alertas_stock(df, umbral=5):
         html += "</li>"
     html += "</ul>"
     return html
+
+
+def grafico_existencias_por_proveedor(df):
+    """
+    Gráfico adaptable de existencias por proveedor.
+    - Horizontal si hay más de 8 proveedores.
+    - Vertical si hay pocos.
+    - Scroll automático si hay demasiados registros.
+    """
+
+    if df.empty:
+        return "<p class='text-muted'>No hay datos disponibles para existencias.</p>"
+
+    columnas = [c.lower() for c in df.columns]
+    df.columns = columnas
+
+    if "proveedor" not in columnas or "stock" not in columnas:
+        return "<p class='text-danger'>El DataFrame no contiene 'proveedor' o 'stock'.</p>"
+
+    existencias = (
+        df.groupby("proveedor")["stock"]
+        .sum()
+        .reset_index()
+        .sort_values("stock", ascending=False)
+    )
+
+    total = existencias["stock"].sum()
+    if total == 0:
+        return "<p class='text-warning'>No hay unidades registradas en stock actualmente.</p>"
+
+    # --- orientación automática ---
+    orientation = "h" if len(existencias) > 8 else "v"
+
+    # --- gráfico principal ---
+    fig = px.bar(
+        existencias,
+        x="stock" if orientation == "h" else "proveedor",
+        y="proveedor" if orientation == "h" else "stock",
+        orientation=orientation,
+        title="Existencias por proveedor",
+        text="stock",
+        labels={"proveedor": "Proveedor", "stock": "Unidades en stock"},
+    )
+
+    fig.update_traces(
+    texttemplate="%{y}" if orientation == "h" else "%{y}",  # muestra número fijo
+    textposition="inside",       # texto fuera de la barra
+    textfont=dict(size=12, color="black"),  # tamaño y color
+    insidetextanchor="start",     # alineación del texto
+    cliponaxis=False,
+    marker_color="#2ecc71",
+    marker_line_color="#145a32",
+    marker_line_width=1.2,
+)
+
+    # --- layout adaptado ---
+    if orientation == "h":
+        fig.update_layout(
+            yaxis=dict(
+                title=None,
+                automargin=True,
+                categoryorder="total ascending",
+                tickfont=dict(size=11),
+            ),
+            xaxis=dict(title="Unidades"),
+            margin=dict(l=180, r=40, t=60, b=40),
+            height=650,  # altura fija
+        )
+    else:
+        fig.update_layout(
+            xaxis=dict(title=None, tickangle=-45, automargin=True),
+            yaxis=dict(title="Unidades"),
+            margin=dict(l=60, r=40, t=60, b=160),
+            height=500,
+        )
+
+    fig.update_layout(
+        title_x=0.5,
+        title_font_size=20,
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="white", size=13),
+        showlegend=False,
+    )
+
+    # --- scroll automático dentro de la card ---
+    html_div = plot(fig, output_type="div", include_plotlyjs=True)
+    html_wrapped = (
+        "<div style='overflow-y:auto; max-height:650px; width:100%; "
+        "padding:10px; box-sizing:border-box;'>"
+        f"{html_div}</div>"
+    )
+    return html_wrapped

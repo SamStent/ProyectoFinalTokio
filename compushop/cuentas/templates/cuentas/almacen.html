@@ -1,16 +1,64 @@
 {% extends "cuentas/personal_dashboard.html" %}
-{% block title %}Panel Almacén{% endblock %}
+{% load i18n %}
 
-{% block content %}
+{% block title %}{% trans "Gestión de Stock (Almacén)" %}{% endblock %}
 
-<div class="container mt-5">
-  <div class="alert alert-info text-center">
+{% block dashboard_content %}
+<div class="container my-4">
 
-    <h3>Bienvenido {{ user.username }}</h3>
-    <h2>Panel del personal - Alamacén</h2>
-    <p>Gestión de stock y productos.</p>
-
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">🧰 {% trans "Gestión de Stock" %}</h2>
+    <div>
+      <a href="{% url 'almacen:inventario' %}" class="btn btn-outline-primary me-2">
+        🧾 {% trans "Ver inventario" %}
+      </a>
+      <a href="{% url 'almacen:movimientos' %}" class="btn btn-outline-secondary">
+        🔁 {% trans "Movimientos" %}
+      </a>
+    </div>
   </div>
-</div>
 
+  {# ALERTAS DE BAJO STOCK #}
+  {% if alertas and alertas|length > 0 %}
+    <div class="alert alert-warning">
+      <strong>⚠ {% trans "Alertas de bajo stock" %}:</strong>
+      <ul class="mb-0">
+        {% for p in alertas %}
+          <li>
+            {{ p.nombre }} — {% trans "Stock" %}: {{ p.stock }} / {% trans "Mínimo" %}: {{ p.stock_minimo }}
+            {% if p.proveedor %} · {% trans "Proveedor" %}: {{ p.proveedor }}{% endif %}
+            <a href="{% url 'almacen:ajustar' p.id %}" class="ms-2 btn btn-sm btn-warning">
+              {% trans "Actualizar" %}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="alert alert-success">
+      ✅ {% trans "No hay alertas de bajo stock." %}
+    </div>
+  {% endif %}
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="get" action="{% url 'almacen:inventario' %}" class="row g-2">
+        <div class="col-md-6">
+          <input name="q" type="text" class="form-control" placeholder="{% trans 'Buscar por nombre o SKU' %}">
+        </div>
+        <div class="col-md-3">
+          <select name="filtro" class="form-select">
+            <option value="">{% trans 'Todos' %}</option>
+            <option value="bajo">{% trans 'Solo bajo stock' %}</option>
+            <option value="no_disponible">{% trans 'No disponibles' %}</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-grid">
+          <button class="btn btn-primary">🔎 {% trans 'Buscar en inventario' %}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
 {% endblock %}

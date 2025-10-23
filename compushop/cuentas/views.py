@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import F
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
@@ -34,7 +35,10 @@ def panel_personal(request):
 @login_required
 @solo_rol('almacen', 'gerencia')
 def panel_almacen(request):
-    return render(request, 'cuentas/almacen.html')
+    # Si tu modelo Producto está en tienda.models:
+    from tienda.models import Producto
+    alertas = Producto.objects.filter(stock__lte=F('stock_minimo')).order_by('stock')
+    return render(request, 'cuentas/almacen.html', {'alertas': alertas})
 
 
 @login_required
