@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from . import views, views_dashboard, views_dashboard
+from . import views, views_dashboard
 from .views import CustomLoginView
 
 app_name = 'cuentas'
@@ -13,7 +13,7 @@ urlpatterns = [
         name='login'
     ),
     path('logout/', auth_views.LogoutView.as_view(next_page='cuentas:login'), name='logout'),
-    path('perfil/', views.perfil, name='perfil'),
+    path('panel/cliente/', views.panel_cliente, name='panel_cliente'),
     path('personal/', views.panel_personal, name='panel_personal'),
     path('almacen/', views.panel_almacen, name='panel_almacen'),
     path('ventas/', views.panel_ventas, name='panel_ventas'),

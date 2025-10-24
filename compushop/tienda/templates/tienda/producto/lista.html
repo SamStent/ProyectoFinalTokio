@@ -4,41 +4,40 @@
 {% block title %}{% trans "Productos" %}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="mb-4">
-        {% if categoria %}
-            {{ categoria.nombre }}
-        {% else %}
-            {% trans "Todos los productos" %}
-        {% endif %}
-    </h1>
+<div class="container my-4">
+  <h1 class="mb-4 text-center">
+    {% if categoria %}
+      {{ categoria.nombre }}
+    {% else %}
+      {% trans "Todos los productos" %}
+    {% endif %}
+  </h1>
 
-    <!-- Grid de productos -->
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for producto in productos %}
-        <div class="col">
-            <div class="card h-100">
-                {% if producto.imagen %}
-                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
-                {% else %}
-                <img src="https://via.placeholder.com/300x200?text=Sin+imagen" class="card-img-top" alt="Sin imagen">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ producto }}</h5>
-                    <p class="card-text">
-                      {% localize on %}
-                        {{ producto.precio }}
-                      {% endlocalize %} €
-                    </p>
-                </div>
-                <div class="card-footer text-center">
-                    <a href="{{ producto.get_absolute_url }}" class="btn btn-primary">{% trans "Ver detalles" %}</a>
-                </div>
-            </div>
+  <!-- Grid Bootstrap -->
+  <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
+    {% for producto in productos %}
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+          {% if producto.imagen %}
+            <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+          {% else %}
+            <img src="https://via.placeholder.com/300x200?text=Sin+imagen" class="card-img-top" alt="Sin imagen">
+          {% endif %}
+
+          <div class="card-body text-center d-flex flex-column justify-content-between">
+            <h6 class="card-title text-truncate" style="max-width: 100%;">
+              {{ producto.nombre|truncatewords:3 }}
+            </h6>
+            <p class="card-text mb-2 text-muted">
+              {% localize on %}{{ producto.precio }}{% endlocalize %} €
+            </p>
+            <a href="{{ producto.get_absolute_url }}" class="btn btn-outline-primary btn-sm mt-auto">
+              {% trans "Ver detalles" %}
+            </a>
+          </div>
         </div>
-        {% empty %}
-        <p>{% trans "No hay productos disponibles en esta categoría." %}</p>
-        {% endfor %}
-    </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

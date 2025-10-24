@@ -1,0 +1,57 @@
+{% extends "tienda/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mi Panel de Usuario" %}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-4 text-center">{% trans "Bienvenido," %} {{ usuario.nombre|default:usuario.username }}</h2>
+
+  <!-- Información del usuario -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">{% trans "Datos de tu cuenta" %}</h5>
+      <p><strong>{% trans "Nombre de usuario:" %}</strong> {{ usuario.username }}</p>
+      <p><strong>{% trans "Correo electrónico:" %}</strong> {{ usuario.email }}</p>
+      <p><strong>{% trans "Tipo de cuenta:" %}</strong> {{ usuario.get_tipo_cuenta_display }}</p>
+    </div>
+  </div>
+
+  <!-- Últimas órdenes -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">{% trans "Tus últimas órdenes" %}</h5>
+      {% if ordenes %}
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>{% trans "Fecha" %}</th>
+              <th>{% trans "Total" %}</th>
+              <th>{% trans "Estado" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for orden in ordenes %}
+              <tr>
+                <td>{{ orden.id }}</td>
+                <td>{{ orden.creado|date:"d/m/Y" }}</td>
+                <td>{{ orden.total }} €</td>
+                <td>{{ orden.get_estado_display }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>{% trans "Aún no has realizado ninguna orden." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Enlaces rápidos -->
+  <div class="text-center mt-4">
+    <a href="{% url 'cuentas:logout' %}" class="btn btn-outline-danger">{% trans "Cerrar sesión" %}</a>
+    
+  </div>
+</div>
+{% endblock %}

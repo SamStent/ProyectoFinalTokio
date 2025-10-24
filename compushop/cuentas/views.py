@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
 from .forms import RegistroClienteForm
 from .decorators import solo_clientes, solo_personal, solo_rol, solo_anonimos
+from ordenes.models import Orden
 
 # Create your views here.
 
@@ -14,7 +15,7 @@ def registro(request):
         formulario = RegistroClienteForm(request.POST)
         if formulario.is_valid():
             usuario = formulario.save()
-            return redirect('login')
+            return redirect('cuentas:login')
     else:
         formulario = RegistroClienteForm()
     return render(request, 'cuentas/registro.html', {'formulario': formulario})
@@ -22,8 +23,14 @@ def registro(request):
 
 @login_required
 @solo_clientes
-def perfil(request):
-    return render(request, 'cuentas/perfil.html')
+def panel_cliente(request):
+    """Panel de usuario para clientes autenticados."""
+    usuario = request.user
+    ordenes = Orden.objects.filter(email=usuario.email).order_by('-creado')[:5]
+    return render(request, 'cuentas/panel_cliente.html', {
+        'usuario': usuario,
+        'ordenes': ordenes,
+    })
 
 
 @login_required
@@ -35,7 +42,6 @@ def panel_personal(request):
 @login_required
 @solo_rol('almacen', 'gerencia')
 def panel_almacen(request):
-    # Si tu modelo Producto está en tienda.models:
     from tienda.models import Producto
     alertas = Producto.objects.filter(stock__lte=F('stock_minimo')).order_by('stock')
     return render(request, 'cuentas/almacen.html', {'alertas': alertas})
@@ -60,4 +66,4 @@ class CustomLoginView(LoginView):
         if user.tipo_cuenta == 'personal':
             return '/cuentas/personal/'
         else:
-            return '/cuentas/perfil/'
+            return '/cuentas/panel/cliente/'

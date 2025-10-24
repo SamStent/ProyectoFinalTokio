@@ -43,6 +43,13 @@
             </button>
             <div class="collapse navbar-collapse" id="menu">
                 <ul class="navbar-nav ms-auto">
+                  {% if user.is_authenticated and user.tipo_cuenta == 'cliente' %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'cuentas:panel_cliente' %}">
+                        {% trans "Mi cuenta" %}
+                      </a>
+                    </li>
+                  {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="#">Inicio</a>
                     </li>
