@@ -59,7 +59,11 @@ def pago_proceso(request):
 
 
 def pago_completado(request):
-    return render(request, 'pagos/completado.html')
+    id_orden = request.session.get('id_orden')
+    orden = get_object_or_404(Orden, id=id_orden)
+    orden.pagado = True
+    orden.save(update_fields=['pagado'])
+    return render(request, 'pagos/completado.html', {'orden': orden})
 
 
 def pago_cancelado(request):

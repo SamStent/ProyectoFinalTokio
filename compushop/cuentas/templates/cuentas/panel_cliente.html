@@ -36,8 +36,8 @@
               <tr>
                 <td>{{ orden.id }}</td>
                 <td>{{ orden.creado|date:"d/m/Y" }}</td>
-                <td>{{ orden.total }} €</td>
-                <td>{{ orden.get_estado_display }}</td>
+                <td>{{ orden.precio_total }} €</td>
+                <td>{{ orden.estado_display }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -51,7 +51,7 @@
   <!-- Enlaces rápidos -->
   <div class="text-center mt-4">
     <a href="{% url 'cuentas:logout' %}" class="btn btn-outline-danger">{% trans "Cerrar sesión" %}</a>
-    
+
   </div>
 </div>
 {% endblock %}

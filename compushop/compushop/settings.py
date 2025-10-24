@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Ususario personalizado.
 AUTH_USER_MODEL = 'cuentas.Usuario'
 LOGIN_REDIRECT_URL = 'cuentas:panel_personal'
-LOGOUT_REDIRECT_URL = 'cuentas:login'
+LOGOUT_REDIRECT_URL = 'tienda:listado_productos'
 
 
 # Internationalization

@@ -18,10 +18,17 @@ def crear_orden(request):
         formulario = FormularioCrearOrden(request.POST)
         if formulario.is_valid():
             orden = formulario.save(commit=False)
+            # Asociar el usuario si está autenticado.
+            if request.user.is_authenticated:
+                orden.usuario = request.user
+            # Asegurar consistencia del email si está autenticado.
+            if request.user.is_authenticated and request.user.email:
+                orden.email = request.user.email
             if carro.cupon:
                 orden.cupon = carro.cupon
                 orden.descuento = carro.cupon.descuento
             orden.save()
+            # Crear items desde el carrito.
             for item in carro:
                 ItemOrden.objects.create(
                     orden = orden,
@@ -70,4 +77,4 @@ def orden_admin_pdf(request, id_orden):
 
 def orden_creada(request):
     # Vista que muestra la confirmación de orden creada
-    return render(request, 'ordenes/creado.html')
+    return render(request, 'ordenes/orden/creado.html')

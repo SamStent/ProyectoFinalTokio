@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from django.db.models import F
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib import messages
+from django.urls import reverse
 from .forms import RegistroClienteForm
 from .decorators import solo_clientes, solo_personal, solo_rol, solo_anonimos
 from ordenes.models import Orden
@@ -26,7 +28,7 @@ def registro(request):
 def panel_cliente(request):
     """Panel de usuario para clientes autenticados."""
     usuario = request.user
-    ordenes = Orden.objects.filter(email=usuario.email).order_by('-creado')[:5]
+    ordenes = Orden.objects.filter(usuario=usuario).order_by('-creado')[:5]
     return render(request, 'cuentas/panel_cliente.html', {
         'usuario': usuario,
         'ordenes': ordenes,
@@ -67,3 +69,13 @@ class CustomLoginView(LoginView):
             return '/cuentas/personal/'
         else:
             return '/cuentas/panel/cliente/'
+
+
+def logout_usuario(request):
+    """
+    Cierra la sesión del usuario y redirige al listado de productos.
+    """
+    logout(request)
+    messages.info(request, "Has cerrado sesión correctamente.")
+    # Redirección respetando prefijo de idioma.
+    return redirect(reverse('tienda:listado_productos'))

@@ -9,9 +9,21 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Orden(models.Model):
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='ordenes',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     nombre = models.CharField(_("Nombre"), max_length=50)
     primer_apellido = models.CharField(_("Primer apellido"), max_length=50)
-    segundo_apellido = models.CharField(_("Segundo apellido"), max_length=50, blank=True, null=True)
+    segundo_apellido = models.CharField(
+        _("Segundo apellido"),
+        max_length=50,
+        blank=True,
+        null=True
+    )
     email = models.EmailField(_("E-mail"))
     direccion = models.CharField(_("Dirección"), max_length=250)
     codigo_postal = models.CharField(_("Código postal"), max_length=20)
@@ -54,13 +66,13 @@ class Orden(models.Model):
 
     def obtener_url_stripe(self):
         if not self.stripe_id:
-            # No se asocia un pago
+            # No se asocia un pago.
             return ''
         if '_test_' in settings.STRIPE_SECRET_KEY:
-            # Path de Stripe para los test de pagos
+            # Path de Stripe para los test de pagos.
             path = '/test/'
         else:
-            # Path de Stripe para pagos reales
+            # Path de Stripe para pagos reales.
             path = '/'
         return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
 
@@ -73,6 +85,10 @@ class Orden(models.Model):
             descuento = total * (self.descuento / Decimal(100))
             return descuento.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         return Decimal('0.00')
+
+    @property
+    def estado_display(self):
+        return _("Pagada") if self.pagado else _("Pendiente")
 
 
 

@@ -82,6 +82,7 @@ pdf_orden.short_description = 'Invoice'
 class OrdenAdmin(admin.ModelAdmin):
     list_display = [
         'id',
+        'usuario',
         'nombre',
         'primer_apellido',
         'segundo_apellido',
@@ -96,6 +97,7 @@ class OrdenAdmin(admin.ModelAdmin):
         detalle_orden,
         pdf_orden,
         ]
-    list_filter = ['pagado', 'creado', 'actualizado']
+    list_filter = ['pagado', 'creado', 'usuario', 'actualizado']
+    search_fields = ['id', 'email', 'usuario__username']
     inlines = [ItemOrdenEnLinea]
     actions = [exportar_a_csv]

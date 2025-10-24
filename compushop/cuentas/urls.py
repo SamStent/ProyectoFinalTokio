@@ -12,7 +12,7 @@ urlpatterns = [
         CustomLoginView.as_view(template_name='cuentas/login.html'),
         name='login'
     ),
-    path('logout/', auth_views.LogoutView.as_view(next_page='cuentas:login'), name='logout'),
+    path('logout/', views.logout_usuario, name='logout'),
     path('panel/cliente/', views.panel_cliente, name='panel_cliente'),
     path('personal/', views.panel_personal, name='panel_personal'),
     path('almacen/', views.panel_almacen, name='panel_almacen'),
