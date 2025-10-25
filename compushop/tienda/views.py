@@ -52,7 +52,7 @@ def productos_por_categoria(request, categoria_slug):
     productos = Producto.objects.filter(categoria=categoria, disponible=True)
     return render(
         request,
-        'tienda/lista.html',
+        'tienda/producto/lista.html',
         {
             'categoria': categoria,
             'productos': productos
