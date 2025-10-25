@@ -15,6 +15,7 @@ class Categoria(models.Model):
 
     nombre = models.CharField(_("Nombre"), max_length=200)
     slug = models.SlugField(_("Slug"), max_length=200, unique=True)
+    activo = models.BooleanField(default=True)
 
     class Meta:
         # Ver models.py en app ordenes para info sobre class Meta en django.

@@ -53,8 +53,22 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Inicio</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Categorías</a>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                         data-bs-toggle="dropdown" aria-expanded="false">
+                        Categorías
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% for categoria in categorias_menu %}
+                          <li>
+                            <a class="dropdown-item" href="{% url 'tienda:productos_por_categoria' categoria.slug %}">
+                              {{ categoria.nombre }}
+                            </a>
+                          </li>
+                        {% empty %}
+                          <li><span class="dropdown-item-text text-muted">Sin categorías</span></li>
+                        {% endfor %}
+                      </ul>
                     </li>
                     <li class="nav-item">
                       {% with total_items=carro|length %}
@@ -101,6 +115,17 @@
             </div>
         </div>
     </nav>
+
+    {% if messages %}
+      <div class="container mt-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
 
     <!-- Contenido principal -->
     <main class="container mt-4">
@@ -153,6 +178,13 @@
           flag.classList.add("active");
         }
       });
+      setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        });
+      }, 4000);
     </script>
     {% endblock %}
 </body>

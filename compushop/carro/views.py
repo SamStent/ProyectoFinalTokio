@@ -5,8 +5,9 @@ from tienda.recomendador import Recomendador
 from .carro import Carro
 from .forms import FormularioAniadir
 from cupones.forms import FormularioAplicarCupon
+from django.utils.translation import gettext as _
+from django.contrib import messages
 
-# Create your views here.
 
 
 @require_POST
@@ -21,6 +22,10 @@ def aniadir_a_carro(request, id_producto):
             cantidad=cd['cantidad'],
             actualizar_cantidad=cd['actualizar']
         )
+    messages.success(
+        request,
+        _('{} añadido al carrito.').format(producto.nombre)
+    )
     return redirect('carro:detalle_carro')
 
 

@@ -2,9 +2,9 @@ from django.shortcuts import get_object_or_404, render
 from .models import Categoria, Producto
 from carro.forms import FormularioAniadir
 from .recomendador import Recomendador
+from .models import Categoria, Producto
 # from django.utils import translation  ->> Probar las traducciones.
 
-# Create your views here.
 
 
 # Vista para mostrar listado de productos
@@ -29,8 +29,7 @@ def listado_productos(request, slug_categoria=None):
     )
 
 
-# Vista para mostrar un único productos
-
+# Vista para mostrar un único producto.
 def detalle_producto(request, id, slug):
     producto = get_object_or_404(
         Producto, id=id, slug=slug, disponible=True
@@ -45,5 +44,17 @@ def detalle_producto(request, id, slug):
         'producto': producto,
         'formulario_producto_carro': formulario_producto_carro,
         'productos_recomendados': productos_recomendados
+        }
+    )
+
+def productos_por_categoria(request, categoria_slug):
+    categoria = get_object_or_404(Categoria, slug=categoria_slug)
+    productos = Producto.objects.filter(categoria=categoria, disponible=True)
+    return render(
+        request,
+        'tienda/lista.html',
+        {
+            'categoria': categoria,
+            'productos': productos
         }
     )
