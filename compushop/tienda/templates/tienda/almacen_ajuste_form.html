@@ -1,20 +1,59 @@
 {% extends "cuentas/personal_dashboard.html" %}
-{% block title %}Ajustar stock{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Ajustar stock" %}{% endblock %}
+
 {% block dashboard_content %}
 <div class="container my-4">
-  <h3>Ajustar stock — {{ producto.nombre }}</h3>
-  <form method="post" class="card card-body shadow-sm">
-    {% csrf_token %}
-    <div class="row g-3">
-      <div class="col-md-3">{{ form.tipo.label_tag }} {{ form.tipo }}</div>
-      <div class="col-md-3">{{ form.cantidad.label_tag }} {{ form.cantidad }}</div>
-      <div class="col-md-3">{{ form.referencia.label_tag }} {{ form.referencia }}</div>
-      <div class="col-md-12">{{ form.motivo.label_tag }} {{ form.motivo }}</div>
-    </div>
-    <div class="mt-3">
-      <button class="btn btn-primary">Guardar</button>
-      <a class="btn btn-outline-secondary" href="{% url 'almacen:inventario' %}">Cancelar</a>
-    </div>
-  </form>
+  <div class="card shadow-sm p-4">
+    <h3 class="mb-4 text-center text-primary fw-bold">
+      {% trans "Ajustar stock" %} — {{ producto.nombre }}
+    </h3>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <!-- Tipo -->
+      <div class="mb-3">
+        <label for="{{ form.tipo.id_for_label }}" class="form-label fw-semibold">
+          {% trans "Tipo de ajuste" %}
+        </label>
+        {{ form.tipo }}
+      </div>
+
+      <!-- Cantidad -->
+      <div class="mb-3">
+        <label for="{{ form.cantidad.id_for_label }}" class="form-label fw-semibold">
+          {% trans "Cantidad" %}
+        </label>
+        {{ form.cantidad }}
+      </div>
+
+      <!-- Referencia -->
+      <div class="mb-3">
+        <label for="{{ form.referencia.id_for_label }}" class="form-label fw-semibold">
+          {% trans "Referencia o código interno" %}
+        </label>
+        {{ form.referencia }}
+      </div>
+
+      <!-- Motivo -->
+      <div class="mb-3">
+        <label for="{{ form.motivo.id_for_label }}" class="form-label fw-semibold">
+          {% trans "Motivo del ajuste" %}
+        </label>
+        {{ form.motivo }}
+      </div>
+
+      <!-- Botones -->
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-4 me-2">
+          <i class="bi bi-check-circle me-1"></i> {% trans "Guardar" %}
+        </button>
+        <a class="btn btn-secondary px-4" href="{% url 'almacen:inventario' %}">
+          <i class="bi bi-x-circle me-1"></i> {% trans "Cancelar" %}
+        </a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

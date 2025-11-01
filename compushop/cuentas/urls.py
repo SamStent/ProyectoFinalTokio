@@ -20,6 +20,7 @@ urlpatterns = [
     path('gerencia/', views.panel_gerencia, name='panel_gerencia'),
     path('<str:rol>/dashboard/', views_dashboard.dashboard_view, name='dashboard_view'),
     path('gerencia/config_panel', views_dashboard.config_panel, name='config_panel'),
+    path('panel/ventas/inventario', views.inventario_acceso_ventas, name='inventario_ventas'),
     path('configuracion/', views_dashboard.config_panel, name='config_panel'),
     path('configuracion/almacen/', views_dashboard.config_almacen, name='config_almacen')
 ]

@@ -20,27 +20,31 @@
 
   {# ALERTAS DE BAJO STOCK #}
   {% if alertas and alertas|length > 0 %}
-    <div class="alert alert-warning">
+    <div class="alert alert-warning alertas-stock shadow-sm">
       <strong>⚠ {% trans "Alertas de bajo stock" %}:</strong>
-      <ul class="mb-0">
+      <ul class="list-unstyled mb-0 mt-2">
         {% for p in alertas %}
-          <li>
-            {{ p.nombre }} — {% trans "Stock" %}: {{ p.stock }} / {% trans "Mínimo" %}: {{ p.stock_minimo }}
-            {% if p.proveedor %} · {% trans "Proveedor" %}: {{ p.proveedor }}{% endif %}
-            <a href="{% url 'almacen:ajustar' p.id %}" class="ms-2 btn btn-sm btn-warning">
-              {% trans "Actualizar" %}
-            </a>
+          <li class="d-flex justify-content-between align-items-center border-bottom py-2">
+            <div>
+              {{ p.nombre }} — {% trans "Stock" %}: {{ p.stock }} / {% trans "Mínimo" %}: {{ p.stock_minimo }}
+              {% if p.proveedor %} · {% trans "Proveedor" %}: {{ p.proveedor }}{% endif %}
+            </div>
+            <div>
+              <a href="{% url 'almacen:ajustar' p.id %}" class="btn btn-sm btn-warning actualizar-btn">
+                {% trans "Actualizar" %}
+              </a>
+            </div>
           </li>
         {% endfor %}
       </ul>
     </div>
   {% else %}
-    <div class="alert alert-success">
+    <div class="alert alert-success shadow-sm">
       ✅ {% trans "No hay alertas de bajo stock." %}
     </div>
   {% endif %}
 
-  <div class="card shadow-sm">
+  <div class="card shadow-sm mt-4">
     <div class="card-body">
       <form method="get" action="{% url 'almacen:inventario' %}" class="row g-2">
         <div class="col-md-6">
@@ -61,4 +65,25 @@
   </div>
 
 </div>
+
+{% block extra_css %}
+<style>
+  /* Espaciado entre botones de actualizar */
+  .alertas-stock .actualizar-btn {
+    margin-bottom: 0.4rem;
+    margin-top: 0.3rem;
+  }
+
+  /* Mejora la separación entre elementos de lista */
+  .alertas-stock li {
+    line-height: 1.6;
+  }
+
+  /* Sombras suaves y bordes redondeados */
+  .alertas-stock {
+    border-radius: 0.5rem;
+  }
+</style>
+{% endblock %}
+
 {% endblock %}

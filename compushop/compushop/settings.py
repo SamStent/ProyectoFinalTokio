@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'tienda.apps.TiendaConfig',
     'cupones.apps.CuponesConfig',
     'rosetta',
+    "django_extensions",
 ]
 
 MIDDLEWARE = [

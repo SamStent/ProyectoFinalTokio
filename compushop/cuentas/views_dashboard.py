@@ -35,8 +35,6 @@ def dashboard_view(request, rol):
 
     df = obtener_dataframe_productos()
 
-
-
     metricas = obtener_metricas_activas(user)
 
     context = {
@@ -53,7 +51,6 @@ def dashboard_view(request, rol):
             # OJO: el template suele esperar “grafico_precios_html”
             "grafico_precios_html": grafico_precio_medio_por_proveedor(df) if metricas.get("precio_medio") else "",
             "grafico_distribucion_stock_html": grafico_distribucion_stock(df) if metricas.get("distribucion_stock") else "",
-            "alertas_stock_html": bloque_alertas_stock(df, umbral=metricas.get("umbral_stock")) if metricas.get("alertas_stock") else "",
         })
 
     elif rol == "gerencia":
@@ -63,8 +60,7 @@ def dashboard_view(request, rol):
             "grafico_precios_html": grafico_precio_medio_por_proveedor(df) if metricas.get("precio_medio") else "",
             "grafico_distribucion_stock_html": grafico_distribucion_stock(df) if metricas.get("distribucion_stock") else "",
             "grafico_rendimiento_html": grafico_rendimiento_por_proveedor(df) if metricas.get("rendimiento") else "",
-            "grafico_rotacion_html": grafico_rotacion_productos(df) if metricas.get("rotacion") else "",
-            "alertas_stock_html": bloque_alertas_stock(df, umbral=metricas.get("umbral_stock")) if metricas.get("alertas_stock") else "",
+            "grafico_rotacion_html": grafico_rotacion_productos(df) if metricas.get("rotacion") else "",            
         })
 
     else:

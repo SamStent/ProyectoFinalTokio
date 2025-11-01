@@ -1,20 +1,35 @@
 {% extends "cuentas/personal_dashboard.html" %}
-{% block title %}Perfil Ventas{% endblock %}
+{% load i18n %}
 
-{% block content %}
+{% block title %}{% trans "Panel de Ventas" %}{% endblock %}
 
-<div class="container mt-5">
-  <div class="alert alert-info text-center">
+{% block dashboard_content %}
+<div class="container mt-4">
 
-    <h3>Bienvenido {{ user.username }}</h3>
-    <h2>Panel del personal - Ventas</h2>
-    <p>Resumen de ventas, pedidos, clientes y proveedores.</p>
-
+  <div class="alert alert-info text-center mb-4">
+    <h3>{% trans "Bienvenido" %} {{ user.username }}</h3>
+    <h4 class="fw-bold">{% trans "Panel del personal - Ventas" %}</h4>
+    <p>{% trans "Resumen de ventas, pedidos, clientes y proveedores." %}</p>
     <a href="{% url 'cuentas:dashboard_view' rol='ventas' %}" class="btn btn-primary">
-      Ver Dashboard de Ventas
+      {% trans "Ver Dashboard de Ventas" %}
     </a>
-
   </div>
-</div>
 
+  <div class="card shadow-sm p-4">
+    <h4 class="text-primary fw-semibold mb-3">
+      {% trans "Métrica por defecto: Rendimiento por proveedor" %}
+    </h4>
+
+    {% if grafico_html %}
+      <div class="grafico-container">
+        {{ grafico_html|safe }}
+      </div>
+    {% else %}
+      <div class="alert alert-secondary text-center">
+        {% trans "No hay datos disponibles para generar la métrica." %}
+      </div>
+    {% endif %}
+  </div>
+
+</div>
 {% endblock %}

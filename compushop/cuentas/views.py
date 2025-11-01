@@ -8,8 +8,8 @@ from django.urls import reverse
 from .forms import RegistroClienteForm
 from .decorators import solo_clientes, solo_personal, solo_rol, solo_anonimos
 from ordenes.models import Orden
+from tienda.models import Producto
 
-# Create your views here.
 
 @solo_anonimos
 def registro(request):
@@ -17,6 +17,7 @@ def registro(request):
         formulario = RegistroClienteForm(request.POST)
         if formulario.is_valid():
             usuario = formulario.save()
+            messages.success(request, "Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión.")
             return redirect('cuentas:login')
     else:
         formulario = RegistroClienteForm()
@@ -52,13 +53,28 @@ def panel_almacen(request):
 @login_required
 @solo_rol('ventas', 'gerencia')
 def panel_ventas(request):
-    return render(request, 'cuentas/ventas.html')
+    """
+    Panel principal para el rol Ventas.
+    Muestra un resumen básico y una métrica por defecto (redimiento
+    por proveedor.)
+    """
+    from cuentas.utils.metricas import obtener_dataframe_productos
+    from cuentas.utils.graficos import grafico_rendimiento_por_proveedor
+
+    df = obtener_dataframe_productos()
+    grafico_html = grafico_rendimiento_por_proveedor(df)
+
+    context = {
+        'grafico_html': grafico_html,
+    }
+
+    return render(request, 'cuentas/ventas.html', context)
 
 
 @login_required
 @solo_rol('gerencia')
 def panel_gerencia(request):
-    return render(request, 'cuentas/gerencia.html')
+    return render(request, 'cuentas/gerencia.html', context)
 
 
 class CustomLoginView(LoginView):
@@ -79,3 +95,27 @@ def logout_usuario(request):
     messages.info(request, "Has cerrado sesión correctamente.")
     # Redirección respetando prefijo de idioma.
     return redirect(reverse('tienda:listado_productos'))
+
+
+@login_required
+@solo_rol('ventas', 'gerencia')
+def inventario_acceso_ventas(request):
+    """
+    Permite al rol ventas acceder al inventario (vista almacén)
+    solo en modo lectura.
+    """
+
+    qs = Producto.objects.all().select_related('proveedor').order_by('nombre')
+    alertas = qs.filter(stock__lte=F('stock_minimo')).order_by('stock')
+    print("Productos encontrados:", qs.count())
+    context = {
+        'producto': qs,
+        'alertas': alertas,
+        'modo_lectura': True,
+    }
+
+    return render(
+        request,
+        'tienda/almacen_inventario_list.html',
+        context
+    )

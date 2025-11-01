@@ -105,10 +105,9 @@
               <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="cuentaDropdown">
                 {% if user.tipo_cuenta == 'cliente' %}
                   <li><a class="dropdown-item" href="{% url 'cuentas:panel_cliente' %}">{% trans "Panel de usuario" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'ordenes:lista_ordenes' %}">{% trans "Mis pedidos" %}</a></li>
                   <li><hr class="dropdown-divider"></li>
                 {% endif %}
-                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">{% trans "Cerrar sesión" %}</a></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'cuentas:logout' %}">{% trans "Cerrar sesión" %}</a></li>
               </ul>
             </li>
           {% else %}

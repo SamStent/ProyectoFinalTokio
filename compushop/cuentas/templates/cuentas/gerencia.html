@@ -1,20 +1,34 @@
 {% extends "cuentas/personal_dashboard.html" %}
-{% block title %}Perfil Gerencia{% endblock %}
+{% load i18n %}
 
-{% block content %}
+{% block title %}{% trans "Panel Gerencia" %}{% endblock %}
 
-<div class="container mt-5">
-  <div class="alert alert-info text-center">
+{% block dashboard_content %}
+<div class="container mt-4">
 
-    <h3>Bienvenido {{ user.username }}</h3>
-    <h2>Panel del personal - Gerencia</h2>
-    <p>Indicadores clave del negocio (KPI, ingresos, rendimiento).</p>
+  <div class="alert alert-info text-center shadow-sm rounded-3 p-4 mb-4">
+    <h3 class="fw-bold text-primary">
+      {% trans "Bienvenido" %} {{ user.username }}
+    </h3>
+    <h4 class="text-secondary mb-3">
+      {% trans "Panel del personal - Gerencia" %}
+    </h4>
+    <p class="mb-3">
+      {% trans "Indicadores clave del negocio (KPI, ingresos, rendimiento)." %}
+    </p>
 
-    <a href="{% url 'cuentas:dashboard_view' rol='gerencia' %}" class="btn btn-gradient mt-3">
-      📊 Ver Dashboard de Gerencia
+    <a href="{% url 'cuentas:dashboard_view' rol='gerencia' %}" class="btn btn-gradient">
+      📊 {% trans "Ver Dashboard de Gerencia" %}
     </a>
-
   </div>
-</div>
 
+  <!-- 🔽 Inventario en modo lectura -->
+  <div class="card bg-dark text-light shadow-sm rounded-4 p-3 mb-4">
+    <h5 class="text-success fw-bold mb-3">
+      {% trans "Inventario general" %}
+    </h5>
+    {% include "tienda/almacen_inventario_list.html" %}
+  </div>
+
+</div>
 {% endblock %}

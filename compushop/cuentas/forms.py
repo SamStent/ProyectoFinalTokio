@@ -18,8 +18,15 @@ class RegistroClienteForm(UserCreationForm):
             'username': _('Introduce un nombre único para tu cuenta.'),
             'email': _('Lo utilizaremos para notificaciones y confirmaciones.'),
             'password1': _('Introduce una contraseña válida.'),
-            'password2': _('Repite tu contraseña'),
+            'password2': _('Repite tu contraseña.'),
         }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.tipo_cuenta = 'cliente'
+        if commit:
+            user.save()
+        return user
 
 
 

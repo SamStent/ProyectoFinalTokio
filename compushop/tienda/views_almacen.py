@@ -18,7 +18,7 @@ def inventario_list(request):
     elif filtro == 'no_disponible':
         qs = qs.filter(disponible=False)
     qs = qs.order_by('nombre')
-    return render(request, 'tienda/almacen_inventario_list.html', {'productos': qs})
+    return render(request, 'tienda/almacen_inventario_list.html', {'producto': qs})
 
 @login_required
 @solo_rol('almacen', 'gerencia')
